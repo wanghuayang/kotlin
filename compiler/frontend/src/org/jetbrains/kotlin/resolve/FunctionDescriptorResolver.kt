@@ -207,6 +207,7 @@ class FunctionDescriptorResolver(
                 val valueParameterDescriptor = expectedValueParameters.single()
                 val it = ValueParameterDescriptorImpl(functionDescriptor, null, 0, Annotations.EMPTY, Name.identifier("it"),
                                                       expectedParameterTypes!!.single(), valueParameterDescriptor.declaresDefaultValue(),
+                                                      valueParameterDescriptor.isAnnotatedWithDefaultValue(),
                                                       valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                                                       valueParameterDescriptor.isStableName, valueParameterDescriptor.varargElementType,
                                                       SourceElement.NO_SOURCE)

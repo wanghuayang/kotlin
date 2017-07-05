@@ -206,7 +206,7 @@ class ChangeMemberFunctionSignatureFix private constructor(
                 val (index, parameter) = it
                 ValueParameterDescriptorImpl(
                         descriptor, null, index,
-                        parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(),
+                        parameter.annotations, parameter.name, parameter.returnType!!, parameter.declaresDefaultValue(), parameter.isAnnotatedWithDefaultValue(),
                         parameter.isCrossinline, parameter.isNoinline, parameter.isStableName, parameter.varargElementType, SourceElement.NO_SOURCE
                 )
             }

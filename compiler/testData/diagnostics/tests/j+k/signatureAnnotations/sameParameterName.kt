@@ -1,7 +1,9 @@
 
 // FILE: A.java
+import kotlin.internal.*;
+
 public class A {
-    public void same(@kotlin.internal.ParameterName(name = "ok") String first, @kotlin.internal.ParameterName(name = "ok") String second) {
+    public void same(@ParameterName(name = "ok") String first, @ParameterName(name = "ok") String second) {
     }
 }
 

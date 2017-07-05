@@ -1,19 +1,20 @@
 // FILE: A.java
+import kotlin.internal.*;
 
 class A {
-    public void call(@kotlin.internal.ParameterName(name = "foo") String arg) {
+    public void call(@ParameterName(name = "foo") String arg) {
     }
 }
 
 // FILE: B.java
+import kotlin.internal.*;
 
 class B extends A {
-    public void call(@kotlin.internal.ParameterName(name = "bar") String arg) {
+    public void call(@ParameterName(name = "bar") String arg) {
     }
 }
 
 // FILE: C.java
-
 class C extends A {
     public void call(String arg) {
     }
@@ -26,8 +27,10 @@ open class D {
 }
 
 // FILE: E.java
+import kotlin.internal.*;
+
 class E extends D {
-    public void call(@kotlin.internal.ParameterName(name = "baz") String bar) {
+    public void call(@ParameterName(name = "baz") String bar) {
     }
 }
 
@@ -39,8 +42,10 @@ class F extends D {
 
 
 // FILE: G.java
+import kotlin.internal.*;
+
 class G {
-    public void foo(String bar, @kotlin.internal.ParameterName(name = "foo") String baz) {
+    public void foo(String bar, @ParameterName(name = "foo") String baz) {
     }
 }
 

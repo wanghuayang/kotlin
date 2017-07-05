@@ -69,6 +69,7 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
         return new ValueParameterDescriptorImpl(
                 setterDescriptor, null, 0, Annotations.Companion.getEMPTY(), Name.special("<set-?>"), type,
                 /* declaresDefaultValue = */ false,
+                /* isAnnotatedWithDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 /* isStableName = */ false,

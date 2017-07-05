@@ -230,6 +230,7 @@ fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index
             name                  = name,
             outType               = type,
             declaresDefaultValue  = false,
+            isAnnotatedWithDefaultValue = false,
             isCrossinline         = false,
             isNoinline            = false,
             isStableName          = false,

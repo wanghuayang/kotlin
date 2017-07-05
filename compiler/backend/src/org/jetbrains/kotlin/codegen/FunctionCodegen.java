@@ -1128,7 +1128,7 @@ public class FunctionCodegen {
         boolean needed = false;
         if (functionDescriptor != null) {
             for (ValueParameterDescriptor parameterDescriptor : functionDescriptor.getValueParameters()) {
-                if (parameterDescriptor.declaresDefaultValue()) {
+                if (parameterDescriptor.declaresDefaultValue() && !parameterDescriptor.isAnnotatedWithDefaultValue()) {
                     needed = true;
                     break;
                 }

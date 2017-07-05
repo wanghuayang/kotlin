@@ -645,7 +645,7 @@ class LocalDeclarationsLowering(val context: BackendContext) : DeclarationContai
                         valueDescriptor.annotations,
                         suggestNameForCapturedValue(valueDescriptor),
                         valueDescriptor.type,
-                        false, false, false, false, null, valueDescriptor.source
+                        false, false, false, false, false, null, valueDescriptor.source
                 )
 
         private fun createUnsubstitutedParameter(

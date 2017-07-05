@@ -1,7 +1,10 @@
 
 // FILE: A.java
+
+import kotlin.internal.*;
+
 public class A {
-    public void connect(@kotlin.internal.ParameterName(name = "host") String host, @kotlin.internal.ParameterName(name = "port") int port) {
+    public void connect(@ParameterName(name = "host") String host, @ParameterName(name = "port") int port) {
     }
 }
 

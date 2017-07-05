@@ -170,6 +170,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                     arg.getArgumentName()?.asName ?: Name.identifier("p$index"),
                     outType,
                     /* declaresDefaultValue = */ false,
+                    /* isAnnotatedWithDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     /* isStableName = */ false,

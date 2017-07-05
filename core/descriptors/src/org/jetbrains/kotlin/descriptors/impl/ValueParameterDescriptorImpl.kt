@@ -30,6 +30,7 @@ open class ValueParameterDescriptorImpl(
         name: Name,
         outType: KotlinType,
         private val declaresDefaultValue: Boolean,
+        private val isAnnotatedWithDefaultValue: Boolean,
         override val isCrossinline: Boolean,
         override val isNoinline: Boolean,
         override val isStableName: Boolean,
@@ -56,10 +57,10 @@ open class ValueParameterDescriptorImpl(
         ): ValueParameterDescriptorImpl =
                 if (destructuringVariables == null)
                     ValueParameterDescriptorImpl(containingDeclaration, original, index, annotations, name, outType,
-                                                 declaresDefaultValue, isCrossinline, isNoinline, false, varargElementType, source)
+                                                 declaresDefaultValue, false, isCrossinline, isNoinline, false, varargElementType, source)
                 else
                     WithDestructuringDeclaration(containingDeclaration, original, index, annotations, name, outType,
-                                                 declaresDefaultValue, isCrossinline, isNoinline, false, varargElementType, source,
+                                                 declaresDefaultValue, false, isCrossinline, isNoinline, false, varargElementType, source,
                                                  destructuringVariables)
     }
 
@@ -70,6 +71,7 @@ open class ValueParameterDescriptorImpl(
             annotations: Annotations, name: Name,
             outType: KotlinType,
             declaresDefaultValue: Boolean,
+            isAnnotatedWithDefaultValue: Boolean,
             isCrossinline: Boolean,
             isNoinline: Boolean,
             isStableName: Boolean,
@@ -77,7 +79,7 @@ open class ValueParameterDescriptorImpl(
             source: SourceElement,
             destructuringVariables: () -> List<VariableDescriptor>
     ) : ValueParameterDescriptorImpl(
-            containingDeclaration, original, index, annotations, name, outType, declaresDefaultValue,
+            containingDeclaration, original, index, annotations, name, outType, declaresDefaultValue, isAnnotatedWithDefaultValue,
             isCrossinline, isNoinline, isStableName,
             varargElementType, source) {
         // It's forced to be lazy because its resolution depends on receiver of relevant lambda, that is being created at the same moment
@@ -93,6 +95,8 @@ open class ValueParameterDescriptorImpl(
     override fun declaresDefaultValue(): Boolean {
         return declaresDefaultValue && (containingDeclaration as CallableMemberDescriptor).kind.isReal
     }
+
+    override fun isAnnotatedWithDefaultValue(): Boolean = isAnnotatedWithDefaultValue
 
     override fun getOriginal() = if (original === this) this else original.original
 
@@ -111,7 +115,8 @@ open class ValueParameterDescriptorImpl(
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor {
         return ValueParameterDescriptorImpl(
                 newOwner, null, newIndex, annotations, newName, type, declaresDefaultValue(),
-                isCrossinline, isNoinline, isStableName, varargElementType, SourceElement.NO_SOURCE
+                isAnnotatedWithDefaultValue, isCrossinline, isNoinline, isStableName, varargElementType,
+                SourceElement.NO_SOURCE
         )
     }
 

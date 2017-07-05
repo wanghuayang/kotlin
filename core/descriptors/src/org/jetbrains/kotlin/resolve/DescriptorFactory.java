@@ -142,6 +142,7 @@ public class DescriptorFactory {
         ValueParameterDescriptor parameterDescriptor = new ValueParameterDescriptorImpl(
                 valueOf, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("value"), getBuiltIns(enumClass).getStringType(),
                 /* declaresDefaultValue = */ false,
+                /* isAnnotatedWithDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 /* isStableNames = */ false,

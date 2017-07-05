@@ -53,6 +53,7 @@ class LazyScriptClassMemberScope(
             ValueParameterDescriptorImpl(
                     constructor, null, index, Annotations.EMPTY, name, type,
                     /* declaresDefaultValue = */ false,
+                    /* isAnnotatedWithDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     /* isStableName = */ false,

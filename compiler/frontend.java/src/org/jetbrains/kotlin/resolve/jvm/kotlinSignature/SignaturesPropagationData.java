@@ -169,6 +169,7 @@ public class SignaturesPropagationData {
                         shouldTakeOldName ? stableName : originalParam.getName(),
                         altType,
                         originalParam.declaresDefaultValue(),
+                        originalParam.isAnnotatedWithDefaultValue(),
                         originalParam.isCrossinline(),
                         originalParam.isNoinline(),
                         originalParam.isStableName() || stableName != null,

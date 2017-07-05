@@ -178,7 +178,7 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(function: D, bind
                 function.builtIns.nullableAnyType
             else
                 function.getContinuationParameterTypeOfSuspendFunction(),
-            /* declaresDefaultValue = */ false, /* isCrossinline = */ false,
+            /* declaresDefaultValue = */ false, /* isAnnotatedWithDefaultValue = */ false, /* isCrossinline = */ false,
             /* isNoinline = */ false, /* isStableName = */ false, /* varargElementType = */ null, SourceElement.NO_SOURCE
     )
 

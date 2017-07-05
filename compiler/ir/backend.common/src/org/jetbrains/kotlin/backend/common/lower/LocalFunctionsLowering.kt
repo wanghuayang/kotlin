@@ -317,7 +317,7 @@ class LocalFunctionsLowering(val context: BackendContext): DeclarationContainerL
                         valueDescriptor.annotations,
                         suggestNameForCapturedValueParameter(valueDescriptor),
                         valueDescriptor.type,
-                        false, false, false, false, null, valueDescriptor.source
+                        false, false, false, false, false, null, valueDescriptor.source
                 )
 
         private fun createUnsubstitutedParameter(

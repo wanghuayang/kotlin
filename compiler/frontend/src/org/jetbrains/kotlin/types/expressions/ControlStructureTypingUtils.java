@@ -170,6 +170,7 @@ public class ControlStructureTypingUtils {
                     function, null, i, Annotations.Companion.getEMPTY(), Name.identifier(argumentNames.get(i)),
                     argumentType,
                     /* declaresDefaultValue = */ false,
+                    /* isAnnotatedWithDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     /* isStableName = */ false,

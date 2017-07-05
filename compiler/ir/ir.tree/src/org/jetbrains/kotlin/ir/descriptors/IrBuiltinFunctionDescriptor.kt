@@ -96,6 +96,7 @@ class IrBuiltinValueParameterDescriptorImpl(
     override fun getContainingDeclaration(): CallableDescriptor = containingDeclaration
 
     override fun declaresDefaultValue(): Boolean = false
+    override fun isAnnotatedWithDefaultValue(): Boolean = false
     override fun getOriginal(): ValueParameterDescriptor = this
     override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> = emptyList()
     override val isCrossinline: Boolean get() = false

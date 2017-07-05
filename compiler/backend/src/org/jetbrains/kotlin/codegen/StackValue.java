@@ -29,7 +29,9 @@ import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods;
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.psi.ValueArgument;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -39,6 +41,10 @@ import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument;
 import org.jetbrains.kotlin.resolve.constants.ConstantValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.AnnotationDefaultValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
+import org.jetbrains.kotlin.resolve.descriptorUtil.NullDefaultValue;
+import org.jetbrains.kotlin.resolve.descriptorUtil.StringDefaultValue;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind;
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterSignature;
@@ -178,6 +184,35 @@ public abstract class StackValue {
         }
     }
 
+    @NotNull
+    public static StackValue constantFromString(@NotNull String value, @NotNull Type type) {
+        Type unboxedType = unboxPrimitiveTypeOrNull(type);
+        if (unboxedType != null) {
+            type = unboxedType;
+        }
+
+        switch (type.getSort()) {
+            case Type.BOOLEAN:
+                return constant(Boolean.valueOf(value), type);
+            case Type.CHAR:
+                return constant(value.charAt(0), type);
+            case Type.BYTE:
+                return constant(Byte.valueOf(value), type);
+            case Type.SHORT:
+                return constant(Short.valueOf(value), type);
+            case Type.INT:
+                return constant(Integer.valueOf(value), type);
+            case Type.LONG:
+                return constant(Long.valueOf(value), type);
+            case Type.FLOAT:
+                return constant(Float.valueOf(value), type);
+            case Type.DOUBLE:
+                return constant(Double.valueOf(value), type);
+            default:
+                return constant(value, type);
+        }
+    }
+
     public static StackValue createDefaulValue(@NotNull Type type) {
         if (type.getSort() == Type.OBJECT || type.getSort() == Type.ARRAY) {
             return constant(null, type);
@@ -247,6 +282,33 @@ public abstract class StackValue {
             ExpressionCodegen codegen
     ) {
         return new CollectionElement(collectionElementReceiver, type, getter, setter, codegen);
+    }
+
+    @NotNull
+    public static StackValue findJavaDefaultArgumentValue(
+            ValueParameterDescriptor descriptor,
+            Type type,
+            KotlinTypeMapper typeMapper
+    ) {
+        ClassifierDescriptor classDescriptorForParameterType = descriptor.getType().getConstructor().getDeclarationDescriptor();
+        AnnotationDefaultValue defaultValue = DescriptorUtilsKt.getDefaultValueFromAnnotation(descriptor);
+
+        assert defaultValue != null : "Default value argument shouldn't be empty: " + descriptor;
+
+        if (defaultValue instanceof NullDefaultValue) {
+            return constant(null, type);
+        }
+
+        if (DescriptorUtils.isEnumClass(classDescriptorForParameterType)) {
+            Name value = Name.identifier(((StringDefaultValue) defaultValue).getValue());
+
+            ClassifierDescriptor enumDescriptor = ((ClassDescriptor) classDescriptorForParameterType)
+                    .getUnsubstitutedInnerClassesScope()
+                    .getContributedClassifier(value, NoLookupLocation.FROM_BACKEND);
+
+            return enumEntry((ClassDescriptor) enumDescriptor, typeMapper);
+        }
+        return coercion(constantFromString(((StringDefaultValue) defaultValue).getValue(), type), type);
     }
 
     @NotNull

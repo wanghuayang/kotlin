@@ -4,7 +4,7 @@ public fun main(): kotlin.Unit
 
 public/*package*/ open class A {
     public/*package*/ constructor A()
-    public open fun emptyName(/*0*/ @kotlin.internal.ParameterName(name = "") first: kotlin.String!, /*1*/ @kotlin.internal.ParamterName(value = "ok") /* annotation class not found */ second: kotlin.Int): kotlin.Unit
+    public open fun emptyName(/*0*/ @kotlin.internal.ParameterName(name = "") first: kotlin.String!, /*1*/ @kotlin.internal.ParameterName(value = "ok") /*stablename*/ ok: kotlin.Int): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open fun missingName(/*0*/ @kotlin.internal.ParameterName first: kotlin.String!): kotlin.Unit

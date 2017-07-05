@@ -210,6 +210,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                     name,
                     outType,
                     /* declaresDefaultValue = */ false,
+                    /* isAnnotatedWithDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     parameterName?.isNotEmpty() == true,

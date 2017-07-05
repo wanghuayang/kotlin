@@ -268,6 +268,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
                     c.nameResolver.getName(proto.name),
                     c.typeDeserializer.type(proto.type(c.typeTable)),
                     Flags.DECLARES_DEFAULT_VALUE.get(flags),
+                    false,
                     Flags.IS_CROSSINLINE.get(flags),
                     Flags.IS_NOINLINE.get(flags),
                     false,

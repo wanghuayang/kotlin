@@ -18,7 +18,10 @@ package org.jetbrains.kotlin.backend.jvm.descriptors
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -42,5 +45,5 @@ fun CallableMemberDescriptor.createValueParameter(index: Int, name: String, type
                 Annotations.EMPTY,
                 Name.identifier(name),
                 type,
-                false, false, false, false, null, SourceElement.NO_SOURCE
+                false, false, false, false, false, null, SourceElement.NO_SOURCE
         )

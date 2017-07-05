@@ -35,6 +35,7 @@ fun createValueParametersForInvokeInFunctionType(
                 functionDescriptor, null, i, Annotations.EMPTY,
                 Name.identifier("p${i + 1}"), typeProjection.type,
                 /* declaresDefaultValue = */ false,
+                /* isAnnotatedWithDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 /* isStableName = */ false,

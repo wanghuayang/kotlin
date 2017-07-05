@@ -799,6 +799,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                             unsubstitutedValueParameter.getName(),
                             substitutedType,
                             unsubstitutedValueParameter.declaresDefaultValue(),
+                            unsubstitutedValueParameter.isAnnotatedWithDefaultValue(),
                             unsubstitutedValueParameter.isCrossinline(),
                             unsubstitutedValueParameter.isNoinline(),
                             unsubstitutedValueParameter.isStableName(),

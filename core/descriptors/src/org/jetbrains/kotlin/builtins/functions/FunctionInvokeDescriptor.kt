@@ -136,6 +136,7 @@ class FunctionInvokeDescriptor private constructor(
                     Name.identifier(name),
                     typeParameter.defaultType,
                     /* declaresDefaultValue = */ false,
+                    /* isAnnotatedWithDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     /* isStableName */ false,

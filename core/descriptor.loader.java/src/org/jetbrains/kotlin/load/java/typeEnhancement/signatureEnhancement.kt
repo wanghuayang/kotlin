@@ -16,32 +16,37 @@
 
 package org.jetbrains.kotlin.load.java.typeEnhancement
 
-import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
+import org.jetbrains.kotlin.load.java.descriptors.ValueParameterData
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.computeNewDefaultTypeQualifiers
 import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JavaToKotlinClassMap
+import org.jetbrains.kotlin.resolve.descriptorUtil.NullDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.StringDefaultValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.getDefaultValueFromAnnotation
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
+
 
 class SignatureEnhancement(private val annotationTypeQualifierResolver: AnnotationTypeQualifierResolver) {
 
@@ -72,7 +77,6 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
             else -> null
         }
     }
-
 
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
         return platformSignatures.map {
@@ -118,14 +122,26 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         }
 
         val valueParameterEnhancements = valueParameters.map {
-            p ->
-            parts(
-                    typeContainer = p, isCovariant = false,
+            parameter ->
+            val typeEnhancementResult = parts(
+                    typeContainer = parameter, isCovariant = false,
                     defaultTopLevelQualifiers =
                             outerScopeQualifiers
                                     ?.get(AnnotationTypeQualifierResolver.QualifierApplicabilityType.VALUE_PARAMETER)
-            ) { it.valueParameters[p.index].type }
-                    .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(p.index))
+            ) { it.valueParameters[parameter.index].type }
+                    .enhance(predefinedEnhancementInfo?.parametersInfo?.getOrNull(parameter.index))
+
+            val actualType = if (typeEnhancementResult.wereChanges) typeEnhancementResult.type else parameter.type
+            val defaultValue = parameter.getDefaultValueFromAnnotation()
+
+            val hasDefaultValue = when (defaultValue) {
+                is StringDefaultValue -> actualType.checkLexicalCastFrom(defaultValue.value)
+                NullDefaultValue -> TypeUtils.acceptsNullable(actualType)
+                null -> false
+            }
+
+            val wereChanges = typeEnhancementResult.wereChanges || (hasDefaultValue != parameter.isAnnotatedWithDefaultValue())
+            ValueParameterEnhancementResult(typeEnhancementResult.type, hasDefaultValue, wereChanges)
         }
 
         val returnTypeEnhancement =
@@ -142,10 +158,11 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
 
                 ) { it.returnType!! }.enhance(predefinedEnhancementInfo?.returnTypeInfo)
 
-        if ((receiverTypeEnhancement?.wereChanges ?: false)
+        if ((receiverTypeEnhancement?.wereChanges == true)
             || returnTypeEnhancement.wereChanges || valueParameterEnhancements.any { it.wereChanges }) {
             @Suppress("UNCHECKED_CAST")
-            return this.enhance(receiverTypeEnhancement?.type, valueParameterEnhancements.map { it.type }, returnTypeEnhancement.type) as D
+            return this.enhance(receiverTypeEnhancement?.type,
+                                valueParameterEnhancements.map { ValueParameterData(it.type, it.hasDefaultValue) }, returnTypeEnhancement.type) as D
         }
 
         return this
@@ -325,7 +342,12 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         }
     }
 
-    private data class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
+    private open class PartEnhancementResult(val type: KotlinType, val wereChanges: Boolean)
+    private class ValueParameterEnhancementResult(
+            type: KotlinType,
+            val hasDefaultValue: Boolean,
+            wereChanges: Boolean
+    ) : PartEnhancementResult(type, wereChanges)
 
     private fun <D : CallableMemberDescriptor> D.parts(
             typeContainer: Annotated?,
@@ -344,4 +366,26 @@ class SignatureEnhancement(private val annotationTypeQualifierResolver: Annotati
         )
     }
 
+    private fun KotlinType.checkLexicalCastFrom(value: String): Boolean {
+        val typeDescriptor = constructor.declarationDescriptor
+
+        val parseResult: Any? = when {
+            KotlinBuiltIns.isBoolean(this) -> value.toBoolean()
+            KotlinBuiltIns.isChar(this) -> value.singleOrNull()
+            KotlinBuiltIns.isByte(this) -> value.toByteOrNull()
+            KotlinBuiltIns.isShort(this) -> value.toShortOrNull()
+            KotlinBuiltIns.isInt(this) -> value.toIntOrNull()
+            KotlinBuiltIns.isLong(this) -> value.toLongOrNull()
+            KotlinBuiltIns.isFloat(this) -> value.toFloatOrNull()
+            KotlinBuiltIns.isDouble(this) -> value.toDoubleOrNull()
+            KotlinBuiltIns.isString(this) -> {}
+            typeDescriptor is ClassDescriptor && typeDescriptor.kind == ClassKind.ENUM_CLASS -> {
+                val descriptor = typeDescriptor.unsubstitutedInnerClassesScope.getContributedClassifier(Name.identifier(value), NoLookupLocation.FROM_BACKEND)
+                if (descriptor is ClassDescriptor && descriptor.kind == ClassKind.ENUM_ENTRY) true else null
+            }
+            else -> null
+        }
+
+        return parseResult != null
+    }
 }

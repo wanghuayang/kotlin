@@ -2,7 +2,9 @@
 
 package test;
 
+import kotlin.internal.*;
+
 public class StableName {
-    public void connect(@kotlin.internal.ParameterName(name = "host") String host) {
+    public void connect(@ParameterName(name = "host") String host) {
     }
 }

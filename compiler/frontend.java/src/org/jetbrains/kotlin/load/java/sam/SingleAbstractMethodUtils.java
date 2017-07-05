@@ -186,6 +186,7 @@ public class SingleAbstractMethodUtils {
         ValueParameterDescriptor parameter = new ValueParameterDescriptorImpl(
                 samConstructor, null, 0, Annotations.Companion.getEMPTY(), Name.identifier("function"), parameterType,
                 /* declaresDefaultValue = */ false,
+                /* isAnnotatedWithDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 /* isStableName = */ false,
@@ -314,6 +315,7 @@ public class SingleAbstractMethodUtils {
                     samAdapter, null, originalParam.getIndex(), originalParam.getAnnotations(),
                     originalParam.getName(), newType,
                     /* declaresDefaultValue = */ false,
+                    /* isAnnotatedWithDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
                     /* isStableName = */ false,

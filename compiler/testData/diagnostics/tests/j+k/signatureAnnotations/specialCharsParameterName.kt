@@ -1,9 +1,11 @@
 // FILE: A.java
+import kotlin.internal.*;
+
 public class A {
-    public void dollarName(@kotlin.internal.ParameterName(name = "$") String host) {
+    public void dollarName(@ParameterName(name = "$") String host) {
     }
 
-    public void numberName(@kotlin.internal.ParameterName(name = "42") String field) {
+    public void numberName(@ParameterName(name = "42") String field) {
     }
 }
 

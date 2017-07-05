@@ -72,3 +72,24 @@ internal annotation class DynamicExtension
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class ParameterName(val name: String)
+
+/**
+ * Default value for java method parameter.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class DefaultValue(val value: String)
+
+/**
+ * Define that null is default value for method parameter.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class DefaultNull
+
+/**
+ * Redirect method call to static defined signature.
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class RedirectCall(val owner: String, val name: String, val signature: String)

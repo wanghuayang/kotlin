@@ -36,6 +36,11 @@ interface ValueParameterDescriptor : VariableDescriptor, ParameterDescriptor {
      */
     fun declaresDefaultValue(): Boolean
 
+    /**
+     * @return true if this parameter has default value in annotation
+     */
+    fun isAnnotatedWithDefaultValue(): Boolean
+
     val varargElementType: KotlinType?
 
     override fun getOriginal(): ValueParameterDescriptor

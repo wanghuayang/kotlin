@@ -311,7 +311,7 @@ public class ValueArgumentsToParametersMapper {
         private void reportUnmappedParameters() {
             for (ValueParameterDescriptor valueParameter : parameters) {
                 if (!usedParameters.contains(valueParameter)) {
-                    if (DescriptorUtilsKt.hasDefaultValue(valueParameter)) {
+                    if (DescriptorUtilsKt.hasDefaultValue(valueParameter) || valueParameter.isAnnotatedWithDefaultValue()) {
                         candidateCall.recordValueArgument(valueParameter, DefaultValueArgument.DEFAULT);
                     }
                     else if (valueParameter.getVarargElementType() != null) {

@@ -32,10 +32,7 @@ import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.load.java.components.DescriptorResolverUtils.resolveOverridesForNonStaticMembers
 import org.jetbrains.kotlin.load.java.components.TypeUsage
-import org.jetbrains.kotlin.load.java.descriptors.JavaClassConstructorDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
-import org.jetbrains.kotlin.load.java.descriptors.copyValueParameters
+import org.jetbrains.kotlin.load.java.descriptors.*
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.childForMethod
 import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
@@ -359,7 +356,9 @@ class LazyJavaClassMemberScope(
         }?.let {
             override ->
             override.newCopyBuilder().apply {
-                setValueParameters(copyValueParameters(overridden.valueParameters.map { it.type }, override.valueParameters, overridden))
+                setValueParameters(copyValueParameters(
+                        overridden.valueParameters.map { ValueParameterData(it.type, it.isAnnotatedWithDefaultValue()) },
+                        override.valueParameters, overridden))
                 setSignatureChange()
                 setPreserveSourceElement()
             }.build()
@@ -605,6 +604,7 @@ class LazyJavaClassMemberScope(
                 // Parameters of annotation constructors in Java are never nullable
                 TypeUtils.makeNotNullable(returnType),
                 method.hasAnnotationParameterDefaultValue,
+                /* isAnnotatedWithDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 /* isStableName = */ false,

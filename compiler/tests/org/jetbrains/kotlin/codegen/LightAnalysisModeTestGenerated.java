@@ -17574,6 +17574,63 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         }
     }
 
+    @TestMetadata("compiler/testData/codegen/box/signatureAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class SignatureAnnotations extends AbstractLightAnalysisModeTest {
+        public void testAllFilesPresentInSignatureAnnotations() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/signatureAnnotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("defaultAndNamedCombination.kt")
+        public void testDefaultAndNamedCombination() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultAndNamedCombination.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultBoxTypes.kt")
+        public void testDefaultBoxTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultBoxTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultEnumType.kt")
+        public void testDefaultEnumType() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultEnumType.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultMultipleParams.kt")
+        public void testDefaultMultipleParams() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultMultipleParams.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultNull.kt")
+        public void testDefaultNull() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultNull.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultOverrides.kt")
+        public void testDefaultOverrides() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultOverrides.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultPrimitiveTypes.kt")
+        public void testDefaultPrimitiveTypes() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultPrimitiveTypes.kt");
+            doTest(fileName);
+        }
+
+        @TestMetadata("defaultValueInConstructor.kt")
+        public void testDefaultValueInConstructor() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/codegen/box/signatureAnnotations/defaultValueInConstructor.kt");
+            doTest(fileName);
+        }
+    }
+
     @TestMetadata("compiler/testData/codegen/box/smap")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
