@@ -802,6 +802,10 @@ internal class DescriptorRendererImpl(
             builder.append("noinline ")
         }
 
+        if (valueParameter.isStableName) {
+            builder.append("/*stablename*/ ")
+        }
+
         renderVariable(valueParameter, includeName, builder, topLevel)
 
         val withDefaultValue = defaultParameterValueRenderer != null && (if (debugMode) valueParameter.declaresDefaultValue() else valueParameter.hasDefaultValue())

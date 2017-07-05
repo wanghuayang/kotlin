@@ -115,7 +115,7 @@ class IrBuiltIns(val builtIns: KotlinBuiltIns) {
 
                 val valueParameterName = ValueParameterDescriptorImpl(
                         this, null, 0, Annotations.EMPTY, Name.identifier("name"), builtIns.stringType,
-                        false, false, false, null, SourceElement.NO_SOURCE
+                        false, false, false, false, null, SourceElement.NO_SOURCE
                 )
 
                 val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameterT.typeConstructor, listOf(), false)

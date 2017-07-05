@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.TypeSubstitutor
 
 fun PropertyDescriptorImpl.initialize(
         type: KotlinType,
@@ -44,5 +42,5 @@ fun CallableMemberDescriptor.createValueParameter(index: Int, name: String, type
                 Annotations.EMPTY,
                 Name.identifier(name),
                 type,
-                false, false, false, null, SourceElement.NO_SOURCE
+                false, false, false, false, null, SourceElement.NO_SOURCE
         )

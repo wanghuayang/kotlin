@@ -23,11 +23,11 @@ public final class MyHashMap : java.util.HashMap<kotlin.String, kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.String?, out kotlin.String?>): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.Function<in kotlin.String, out kotlin.String>): kotlin.String
     public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.String, out kotlin.String?>): kotlin.String?
-    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.String): kotlin.Boolean
-    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ /*stablename*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ /*stablename*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ /*stablename*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String, in kotlin.String>): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ /*stablename*/ key: kotlin.String): kotlin.String?
     invisible_fake final override /*1*/ /*fake_override*/ fun getNode(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Any!): java.util.HashMap.Node<kotlin.String!, kotlin.String!>!
     public final override /*1*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.String): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -37,15 +37,15 @@ public final class MyHashMap : java.util.HashMap<kotlin.String, kotlin.String> {
     public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.String, /*2*/ p2: java.util.function.BiFunction<in kotlin.String, in kotlin.String, out kotlin.String?>): kotlin.String?
     invisible_fake open override /*1*/ /*fake_override*/ fun newNode(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: java.util.HashMap.Node<kotlin.String!, kotlin.String!>!): java.util.HashMap.Node<kotlin.String!, kotlin.String!>!
     invisible_fake open override /*1*/ /*fake_override*/ fun newTreeNode(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: java.util.HashMap.Node<kotlin.String!, kotlin.String!>!): java.util.HashMap.TreeNode<kotlin.String!, kotlin.String!>!
-    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.String?
-    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String, kotlin.String>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ /*stablename*/ key: kotlin.String, /*1*/ /*stablename*/ value: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ /*stablename*/ from: kotlin.collections.Map<out kotlin.String, kotlin.String>): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.String): kotlin.String?
     invisible_fake final override /*1*/ /*fake_override*/ fun putMapEntries(/*0*/ p0: (kotlin.collections.MutableMap<out kotlin.String!, out kotlin.String!>..kotlin.collections.Map<out kotlin.String!, kotlin.String!>?), /*1*/ p1: kotlin.Boolean): kotlin.Unit
     invisible_fake final override /*1*/ /*fake_override*/ fun putVal(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.String!, /*2*/ p2: kotlin.String!, /*3*/ p3: kotlin.Boolean, /*4*/ p4: kotlin.Boolean): kotlin.String!
     invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
     invisible_fake open override /*1*/ /*fake_override*/ fun reinitialize(): kotlin.Unit
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String): kotlin.String?
-    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String, /*1*/ value: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ /*stablename*/ key: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ /*stablename*/ key: kotlin.String, /*1*/ /*stablename*/ value: kotlin.String): kotlin.Boolean
     invisible_fake final override /*1*/ /*fake_override*/ fun removeNode(/*0*/ p0: kotlin.Int, /*1*/ p1: kotlin.Any!, /*2*/ p2: kotlin.Any!, /*3*/ p3: kotlin.Boolean, /*4*/ p4: kotlin.Boolean): java.util.HashMap.Node<kotlin.String!, kotlin.String!>!
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.String): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.String, /*2*/ p2: kotlin.String): kotlin.Boolean

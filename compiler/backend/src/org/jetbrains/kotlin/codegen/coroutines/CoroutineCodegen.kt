@@ -91,7 +91,7 @@ abstract class AbstractCoroutineCodegen(
                     this, null, index, Annotations.EMPTY, name,
                     type,
                     false, false,
-                    false,
+                    false, false,
                     null, SourceElement.NO_SOURCE
             )
 

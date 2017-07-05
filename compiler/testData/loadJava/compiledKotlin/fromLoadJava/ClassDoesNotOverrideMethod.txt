@@ -7,7 +7,7 @@ public abstract class ClassDoesNotOverrideMethod : java.util.Date {
     public open override /*1*/ /*fake_override*/ fun after(/*0*/ `when`: java.util.Date!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun before(/*0*/ `when`: java.util.Date!): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
-    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: java.util.Date!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun compareTo(/*0*/ /*stablename*/ other: java.util.Date!): kotlin.Int
     invisible_fake final override /*1*/ /*fake_override*/ fun getCalendarDate(): sun.util.calendar.BaseCalendar.Date!
     @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getDate(): kotlin.Int
     @kotlin.Deprecated(message = "Deprecated in Java") public open override /*1*/ /*fake_override*/ fun getDay(): kotlin.Int

@@ -1,3 +1,5 @@
+// SKIP_IN_RUNTIME_TEST
+
 package test;
 import java.util.Map;
 public class MapRemove {

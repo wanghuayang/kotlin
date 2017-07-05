@@ -43,8 +43,8 @@ public open class SpecializedMap : AbstractSpecializedMap {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @java.lang.Override public open override /*1*/ fun isEmpty(): kotlin.Boolean
     public open override /*1*/ fun put(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Double): kotlin.Double
-    @java.lang.Override public open override /*1*/ fun put(/*0*/ key: kotlin.Int!, /*1*/ value: kotlin.Double!): kotlin.Double?
-    @java.lang.Override public open override /*1*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>): kotlin.Unit
+    @java.lang.Override public open override /*1*/ fun put(/*0*/ /*stablename*/ key: kotlin.Int!, /*1*/ /*stablename*/ value: kotlin.Double!): kotlin.Double?
+    @java.lang.Override public open override /*1*/ fun putAll(/*0*/ /*stablename*/ from: kotlin.collections.Map<out kotlin.Int!, kotlin.Double!>): kotlin.Unit
     public open override /*1*/ fun remove(/*0*/ k: kotlin.Int): kotlin.Double
     public open override /*1*/ fun remove(/*0*/ ok: kotlin.Int!): kotlin.Double?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

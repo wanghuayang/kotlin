@@ -104,6 +104,7 @@ class IrBuiltinValueParameterDescriptorImpl(
     override fun getCompileTimeInitializer(): ConstantValue<*>? = null
     override fun isVar(): Boolean = false
     override fun getVisibility(): Visibility = Visibilities.LOCAL
+    override val isStableName: Boolean = false
 
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int): ValueParameterDescriptor =
             throw UnsupportedOperationException()

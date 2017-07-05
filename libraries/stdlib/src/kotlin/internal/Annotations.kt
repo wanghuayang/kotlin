@@ -65,3 +65,10 @@ internal annotation class InlineOnly
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class DynamicExtension
+
+/**
+ * Defines parameter name.
+ */
+@Target(AnnotationTarget.VALUE_PARAMETER)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class ParameterName(val name: String)

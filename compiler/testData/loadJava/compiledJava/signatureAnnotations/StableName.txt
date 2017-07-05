@@ -1,0 +1,6 @@
+package test
+
+public open class StableName {
+    public constructor StableName()
+    public open fun connect(/*0*/ @kotlin.internal.ParameterName(name = "host") /*stablename*/ host: kotlin.String!): kotlin.Unit
+}

@@ -68,7 +68,8 @@ public class SignaturesPropagationData {
 
         superFunctions = getSuperFunctionsForMethod(method, autoMethodDescriptor, containingClass);
         modifiedValueParameters = superFunctions.isEmpty()
-                                  ? new ValueParameters(null, autoValueParameters, /* stableParameterNames = */false)
+                                  ? new ValueParameters(null, autoValueParameters,
+                                                        autoValueParameters.stream().allMatch(ValueParameterDescriptor::isStableName))
                                   : modifyValueParametersAccordingToSuperMethods(autoValueParameters);
     }
 
@@ -159,16 +160,18 @@ public class SignaturesPropagationData {
                     }
                 }
 
+                boolean shouldTakeOldName = !originalParam.isStableName() && stableName != null;
                 resultParameters.add(new ValueParameterDescriptorImpl(
                         originalParam.getContainingDeclaration(),
                         null,
                         shouldBeExtension ? originalIndex - 1 : originalIndex,
                         originalParam.getAnnotations(),
-                        stableName != null ? stableName : originalParam.getName(),
+                        shouldTakeOldName ? stableName : originalParam.getName(),
                         altType,
                         originalParam.declaresDefaultValue(),
                         originalParam.isCrossinline(),
                         originalParam.isNoinline(),
+                        originalParam.isStableName() || stableName != null,
                         varargCheckResult.isVararg ? DescriptorUtilsKt.getBuiltIns(originalParam).getArrayElementType(altType) : null,
                         SourceElement.NO_SOURCE
                 ));

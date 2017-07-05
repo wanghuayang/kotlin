@@ -32,8 +32,10 @@ import org.jetbrains.kotlin.load.java.structure.JavaArrayType
 import org.jetbrains.kotlin.load.java.structure.JavaField
 import org.jetbrains.kotlin.load.java.structure.JavaMethod
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstArgumentValue
 import org.jetbrains.kotlin.resolve.retainMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
@@ -46,6 +48,8 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
+
+private val PARAMETER_NAME_FQ_NAME = FqName("kotlin.internal.ParameterName")
 
 abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
     protected abstract val ownerDescriptor: DeclarationDescriptor
@@ -161,11 +165,13 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
             jValueParameters: List<JavaValueParameter>
     ): ResolvedValueParameters {
         var synthesizedNames = false
-        val descriptors = jValueParameters.withIndex().map { pair ->
-            val (index, javaParameter) = pair
+        val usedNames = mutableSetOf<String>()
 
+        val descriptors = jValueParameters.withIndex().map { (index, javaParameter) ->
             val annotations = c.resolveAnnotations(javaParameter)
             val typeUsage = TypeUsage.COMMON.toAttributes()
+            val parameterName = annotations.findAnnotation(PARAMETER_NAME_FQ_NAME)?.firstArgumentValue() as? String
+
             val (outType, varargElementType) =
                     if (javaParameter.isVararg) {
                         val paramType = javaParameter.type as? JavaArrayType
@@ -186,6 +192,9 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                 // TODO: fix Java parameter name loading logic somehow (don't always load "p0", "p1", etc.)
                 Name.identifier("other")
             }
+            else if (parameterName != null && parameterName.isNotEmpty() && usedNames.add(parameterName)) {
+                Name.identifier(parameterName)
+            }
             else {
                 // TODO: parameter names may be drawn from attached sources, which is slow; it's better to make them lazy
                 val javaName = javaParameter.name
@@ -203,6 +212,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
                     /* declaresDefaultValue = */ false,
                     /* isCrossinline = */ false,
                     /* isNoinline = */ false,
+                    parameterName?.isNotEmpty() == true,
                     varargElementType,
                     c.components.sourceElementFactory.source(javaParameter)
             )

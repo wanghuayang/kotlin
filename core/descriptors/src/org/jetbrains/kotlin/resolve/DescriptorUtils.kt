@@ -431,3 +431,5 @@ fun MemberDescriptor.isEffectivelyExternal(): Boolean {
     val containingClass = getContainingClass(this)
     return containingClass != null && containingClass.isEffectivelyExternal()
 }
+
+fun AnnotationDescriptor.firstArgumentValue() = allValueArguments.values.firstOrNull()?.value

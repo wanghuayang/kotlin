@@ -407,6 +407,7 @@ private fun FunctionDescriptor.generateDefaultsFunction(context: CommonBackendCo
                     declaresDefaultValue  = false,
                     isCrossinline         = it.isCrossinline,
                     isNoinline            = it.isNoinline,
+                    isStableName          = it.isStableName,
                     varargElementType     = it.varargElementType,
                     source                = it.source)
         } + syntheticParameters,
@@ -453,6 +454,7 @@ private fun valueParameter(descriptor: FunctionDescriptor, index: Int, name: Nam
             declaresDefaultValue  = false,
             isCrossinline         = false,
             isNoinline            = false,
+            isStableName          = false,
             varargElementType     = null,
             source                = SourceElement.NO_SOURCE
     )
