@@ -58,6 +58,10 @@ class LazyPackageMemberScope(
         c.lookupTracker.record(from, thisDescriptor, name)
     }
 
+    val names by lazy(LazyThreadSafetyMode.PUBLICATION) { declarationProvider.getNames() }
+
+    override fun definitelyDoesNotContainName(name: Name): Boolean = name !in names
+
     // Do not add details here, they may compromise the laziness during debugging
     override fun toString() = "lazy scope for package " + thisDescriptor.name
 }
