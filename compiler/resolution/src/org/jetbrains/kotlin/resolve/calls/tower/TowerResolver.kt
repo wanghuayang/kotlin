@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 interface Candidate {
@@ -96,7 +97,7 @@ class TowerResolver {
             if (scope is LexicalScope) {
                 if (!scope.kind.withLocalDescriptors && scope.mayFitForName(name)) result.add(ScopeBasedTowerLevel(this, scope))
 
-                getImplicitReceiver(scope)?.let { result.add(MemberScopeTowerLevel(this, it)) }
+                getImplicitReceiver(scope)?.let { result.addIfNotNull(MemberScopeTowerLevel(this, it).takeIf { it.mayFitForName(name) }) }
             }
             else if (scope.mayFitForName(name)) {
                 result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
@@ -153,7 +154,9 @@ class TowerResolver {
                     }
 
                     // members of implicit receiver or member extension for explicit receiver
-                    TowerData.TowerLevel(MemberScopeTowerLevel(this, implicitReceiver)).process()?.let { return it }
+                    MemberScopeTowerLevel(this, implicitReceiver).takeIf { it.mayFitForName(name) }?.let {
+                        TowerData.TowerLevel(it).process()?.let { return it }
+                    }
 
                     // synthetic properties
                     TowerData.BothTowerLevelAndImplicitReceiver(syntheticLevel, implicitReceiver).process()?.let { return it }
@@ -184,6 +187,9 @@ class TowerResolver {
 
         return resultCollector.getFinalCandidates()
     }
+
+    private fun MemberScopeTowerLevel.mayFitForName(name: Name) =
+            !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
 
     private fun ResolutionScope.mayFitForName(name: Name) =
             !definitelyDoesNotContainName(name) || !definitelyDoesNotContainName(OperatorNameConventions.INVOKE)
