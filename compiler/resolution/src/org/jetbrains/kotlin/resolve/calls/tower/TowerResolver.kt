@@ -98,7 +98,7 @@ class TowerResolver {
 
                 getImplicitReceiver(scope)?.let { result.add(MemberScopeTowerLevel(this, it)) }
             }
-            else if (!scope.definitelyDoesNotContainName(name)) {
+            else if (scope.mayFitForName(name)) {
                 result.add(ImportingScopeBasedTowerLevel(this, scope as ImportingScope))
             }
         }
@@ -176,7 +176,7 @@ class TowerResolver {
                     }
                 }
             }
-            else if (!scope.definitelyDoesNotContainName(name)) {
+            else if (scope.mayFitForName(name)) {
                 // functions with no receiver or extension for explicit receiver
                 TowerData.TowerLevel(ImportingScopeBasedTowerLevel(this, scope as ImportingScope)).process()?.let { return it }
             }

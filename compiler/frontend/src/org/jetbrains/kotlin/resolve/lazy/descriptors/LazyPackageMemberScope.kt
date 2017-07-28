@@ -60,6 +60,10 @@ class LazyPackageMemberScope(
 
     val names by lazy(LazyThreadSafetyMode.PUBLICATION) { declarationProvider.getNames() }
 
+    override fun getClassifierNames(): Set<Name>? = declarationProvider.getNames()
+    override fun getFunctionNames() = declarationProvider.getNames()
+    override fun getVariableNames() = declarationProvider.getNames()
+
     override fun definitelyDoesNotContainName(name: Name): Boolean = name !in names
 
     // Do not add details here, they may compromise the laziness during debugging
