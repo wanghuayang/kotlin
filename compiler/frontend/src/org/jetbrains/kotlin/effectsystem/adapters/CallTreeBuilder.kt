@@ -157,7 +157,8 @@ class CallTreeBuilder(
     }
 
     override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit?): CTNode {
-        val dfv = expression.createDataFlowValue() ?: return UNKNOWN_CALL
+        // We don't care about lambda type in fact, and it can be non-resolved at this point anyway
+        val dfv = DataFlowValueFactory.createDataFlowValue(expression, DefaultBuiltIns.Instance.anyType, bindingContext, moduleDescriptor)
         val id = ValueIdsFactory.dfvBased(dfv)
         return CTLambda(id, DefaultBuiltIns.Instance.nullableAnyType, null)
     }
