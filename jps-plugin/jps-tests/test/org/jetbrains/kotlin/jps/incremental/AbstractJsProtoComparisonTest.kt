@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.jps.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
-import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ClassProtoData
 import org.jetbrains.kotlin.incremental.Difference
+import org.jetbrains.kotlin.incremental.difference as differenceImpl
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
@@ -94,5 +94,5 @@ abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<Proto
     }
 
     override fun difference(oldData: ProtoData, newData: ProtoData): Difference? =
-            org.jetbrains.kotlin.incremental.difference(oldData, newData)
+            differenceImpl(oldData, newData)
 }
