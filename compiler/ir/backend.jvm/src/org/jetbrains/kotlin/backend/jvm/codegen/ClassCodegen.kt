@@ -20,6 +20,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.descriptors.JvmDescriptorWithExtraFlags
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.MemberCodegen.badDescriptor
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -183,6 +184,8 @@ class ClassCodegen private constructor(
         }
     }
 
+    override val module: ModuleDescriptor
+        get() = state.module
 }
 
 fun ClassDescriptor.calculateClassFlags(): Int {

@@ -23,6 +23,7 @@ import kotlin.jvm.functions.Function0;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.codegen.annotation.AnnotatedSimple;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.context.*;
@@ -373,6 +374,12 @@ public abstract class MemberCodegen<T extends KtPureElement/* TODO: & KtDeclarat
             }
             current = current.getContainingDeclaration();
         }
+    }
+
+    @NotNull
+    @Override
+    public ModuleDescriptor getModule() {
+        return state.getModule();
     }
 
     private void writeInnerClass(@NotNull ClassDescriptor innerClass) {

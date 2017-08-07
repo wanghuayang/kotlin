@@ -1,10 +1,15 @@
 // CORRECT_ERROR_TYPES
 // NON_EXISTENT_CLASS
 // NO_VALIDATION
+// WITH_RUNTIME
 
 import java.util.Calendar
+import kotlin.reflect.KClass
 
-@Suppress("UNRESOLVED_REFERENCE")
+annotation class Ann(val a: KClass<*>)
+
+@Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST")
+@Ann(FooBar::class)
 class Test {
     lateinit var a: ABC
     val b: ABC? = null

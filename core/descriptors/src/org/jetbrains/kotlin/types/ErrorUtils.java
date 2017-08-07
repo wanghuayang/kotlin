@@ -422,6 +422,16 @@ public class ErrorUtils {
         return createErrorTypeConstructorWithCustomDebugName("[ERROR : " + debugMessage + "]", ERROR_CLASS);
     }
 
+    public static SimpleType createKClassOfErrorType(KotlinBuiltIns builtins) {
+        ClassDescriptor kClass = builtins.getBuiltInClassByFqName(KotlinBuiltIns.FQ_NAMES.kClass.toSafe());
+
+        TypeProjectionImpl errorTypeProjection = new TypeProjectionImpl(
+                Variance.INVARIANT, createErrorType("Unsupported constant value"));
+
+        return KotlinTypeFactory.simpleNotNullType(
+                Annotations.Companion.getEMPTY(), kClass, Collections.singletonList(errorTypeProjection));
+    }
+
     @NotNull
     public static TypeConstructor createErrorTypeConstructorWithCustomDebugName(@NotNull String debugName) {
         return createErrorTypeConstructorWithCustomDebugName(debugName, ERROR_CLASS);

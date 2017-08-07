@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.constants.*
+import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
@@ -730,8 +731,10 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     override fun visitClassLiteralExpression(expression: KtClassLiteralExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
-        val type = trace.getType(expression)!!
-        if (type.isError) return null
+        val type = trace.getType(expression)
+                   ?.takeIf { !it.isError }
+                   ?: ErrorUtils.createKClassOfErrorType(this.constantExpressionEvaluator.builtIns)
+
         return KClassValue(type).wrap()
     }
 

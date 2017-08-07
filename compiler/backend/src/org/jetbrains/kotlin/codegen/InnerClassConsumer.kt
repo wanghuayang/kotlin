@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.codegen
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -28,6 +25,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
 interface InnerClassConsumer {
+    val module: ModuleDescriptor
+
     fun addInnerClassInfoFromAnnotation(classDescriptor: ClassDescriptor)
 
     companion object {

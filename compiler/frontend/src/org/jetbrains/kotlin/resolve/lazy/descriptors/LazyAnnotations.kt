@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.AnnotationResolverImpl
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.ErrorValue
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.LazyEntity
 import org.jetbrains.kotlin.resolve.scopes.LexicalScope
@@ -117,10 +118,11 @@ class LazyAnnotationDescriptor(
         if (!resolutionResults.isSingleResult) return@createLazyValue emptyMap<Name, ConstantValue<*>>()
 
         resolutionResults.resultingCall.valueArguments.mapNotNull { (valueParameter, resolvedArgument) ->
-            if (resolvedArgument == null) null
-            else c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, resolvedArgument)?.let { value ->
-                valueParameter.name to value
-            }
+            val value = resolvedArgument?.let { arg ->
+                c.annotationResolver.getAnnotationArgumentValue(c.trace, valueParameter, arg)
+            } ?: ErrorValue.create("Can not resolve a value argument for " + valueParameter.name.asString())
+
+            Pair(valueParameter.name, value)
         }.toMap()
     }
 
