@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValueOfMethod
 import org.jetbrains.kotlin.resolve.DescriptorFactory.createEnumValuesMethod
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
@@ -47,6 +48,11 @@ class StaticScopeForKotlinEnum(
 
     override fun getContributedFunctions(name: Name, location: LookupLocation) =
             functions.filterTo(ArrayList<SimpleFunctionDescriptor>(1)) { it.name == name }
+
+
+    override fun getClassifierNames() = emptySet<Name>()
+    override fun getVariableNames() = emptySet<Name>()
+    override fun getFunctionNames() = setOf(DescriptorUtils.ENUM_VALUES, DescriptorUtils.ENUM_VALUE_OF)
 
     override fun printScopeStructure(p: Printer) {
         p.println("Static scope for $containingClass")
