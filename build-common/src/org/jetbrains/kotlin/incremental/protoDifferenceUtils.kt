@@ -186,7 +186,7 @@ private class DifferenceCalculatorForClass(
         val (oldProto, oldNameResolver) = oldData
         val (newProto, newNameResolver) = newData
 
-        val diff = compareObject.difference(oldData.proto, newData.proto)
+        val diff = compareObject.difference(oldProto, newProto)
 
         var isClassAffected = false
         var areSubclassesAffected = false
@@ -275,7 +275,7 @@ private class DifferenceCalculatorForPackageFacade(
         val oldProto = oldData.proto
         val newProto = newData.proto
 
-        val diff = compareObject.difference(oldData.proto, newData.proto)
+        val diff = compareObject.difference(oldProto, newProto)
 
         val names = hashSetOf<String>()
 
