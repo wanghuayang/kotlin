@@ -1,0 +1,4 @@
+package
+
+public fun functionWithExpressionBody(/*0*/ x: kotlin.Int): [ERROR : Error function type]
+public fun </*0*/ T> myRun(/*0*/ @kotlin.internal.CalledInPlace block: () -> T): T
