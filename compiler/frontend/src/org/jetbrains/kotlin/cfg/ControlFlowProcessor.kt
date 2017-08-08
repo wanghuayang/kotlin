@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors.*
+import org.jetbrains.kotlin.effectsystem.effects.ESCalls
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
@@ -107,6 +108,34 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         builder.nondeterministicJump(afterDeclaration, subroutine, null)
         generate(subroutine)
         builder.bindLabel(afterDeclaration)
+    }
+
+    private fun processInlinedLambda(lambdaFunctionLiteral: KtFunctionLiteral, invocationCount: ESCalls.InvocationCount) {
+        //TODO: undeterministic jump if visit not guaranteed
+
+        // generate(subroutine) peeled
+        builder.enterInlinedSubroutine(lambdaFunctionLiteral, invocationCount)
+        val cfpVisitor = CFPVisitor(builder)
+            val valueParameters = lambdaFunctionLiteral.valueParameters
+            for (valueParameter in valueParameters) {
+                cfpVisitor.generateInstructions(valueParameter)
+            }
+            val bodyExpression = lambdaFunctionLiteral.bodyExpression
+            if (bodyExpression != null) {
+                cfpVisitor.generateInstructions(bodyExpression)
+                if (!lambdaFunctionLiteral.hasBlockBody()) {
+                    generateImplicitReturnValue(bodyExpression, lambdaFunctionLiteral)
+                }
+            }
+
+        builder.exitInlinedSubroutine(lambdaFunctionLiteral, invocationCount)
+
+        //TODO: undeterministic jump if revisit possible
+
+        // after all
+        builder.createLambda(lambdaFunctionLiteral)
+
+        // generate(subroutine) returning pseudocode, but for local declaration it is not needed
     }
 
     private class CatchFinallyLabels(val onException: Label?, val toFinally: Label?, val tryExpression: KtTryExpression?)
@@ -1035,7 +1064,12 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {
             mark(lambdaExpression)
             val functionLiteral = lambdaExpression.functionLiteral
-            visitFunction(functionLiteral)
+            val invocationCount = trace[BindingContext.LAMBDA_INVOCATIONS, lambdaExpression]
+            if (invocationCount == null) {
+                visitFunction(functionLiteral)
+            } else {
+                processInlinedLambda(functionLiteral, invocationCount)
+            }
             copyValue(functionLiteral, lambdaExpression)
         }
 

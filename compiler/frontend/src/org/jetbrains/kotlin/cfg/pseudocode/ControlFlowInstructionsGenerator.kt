@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.effectsystem.effects.ESCalls
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -66,24 +67,47 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
     }
 
     override fun enterSubroutine(subroutine: KtElement) {
+        // here builder is a builder for declaration which contains subroutine
         val builder = builder
         if (builder != null && subroutine is KtFunctionLiteral) {
-            pushBuilder(subroutine, builder.returnSubroutine)
+            pushBuilder(subroutine, builder.returnSubroutine) // changes delegateBuilder
         }
         else {
             pushBuilder(subroutine, subroutine)
         }
+
+        // here delegateBuilder is a new builder, created in pushBuilder specifically for subroutine
         delegateBuilder.enterBlockScope(subroutine)
         delegateBuilder.enterSubroutine(subroutine)
     }
 
     override fun exitSubroutine(subroutine: KtElement): Pseudocode {
+        // looks equivalent to delegateBuilder.exitSubroutine(subroutine)
         super.exitSubroutine(subroutine)
         delegateBuilder.exitBlockScope(subroutine)
+        // this worker used to be delegateBuilder
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
             builder.declareFunction(subroutine, worker.pseudocode)
+        }
+        return worker.pseudocode
+    }
+
+    override fun enterInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount) {
+        enterSubroutine(subroutine)
+    }
+
+    override fun exitInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount): Pseudocode {
+        // looks equivalent to delegateBuilder.exitSubroutine(subroutine)
+        super.exitSubroutine(subroutine)
+        delegateBuilder.exitBlockScope(subroutine)
+
+        // this worker used to be delegateBuilder
+        val worker = popBuilder()
+        if (!builders.empty()) {
+            val builder = builders.peek()
+            builder.declareInlinedFunction(subroutine, worker.pseudocode, invocationCount)
         }
         return worker.pseudocode
     }
@@ -153,6 +177,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             add(SubroutineEnterInstruction(subroutine, currentScope))
         }
 
+        override fun enterInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount) {
+            enterSubroutine(subroutine)
+        }
+
         override val currentSubroutine: KtElement
             get() = pseudocode.correspondingElement
 
@@ -213,6 +241,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             return pseudocode
         }
 
+        override fun exitInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount): Pseudocode {
+            return exitSubroutine(subroutine)
+        }
+
         override fun mark(element: KtElement) {
             add(MarkInstruction(element, currentScope))
         }
@@ -256,6 +288,10 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
         override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
             add(LocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope))
+        }
+
+        override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationCount: ESCalls.InvocationCount) {
+            add(InlinedDeclarationInstruction(subroutine, pseudocode, currentScope, invocationCount))
         }
 
         override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

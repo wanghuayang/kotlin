@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.effectsystem.effects.ESCalls
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
@@ -140,6 +141,13 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
 
     override fun exitSubroutine(subroutine: KtElement): Pseudocode = delegateBuilder.exitSubroutine(subroutine)
 
+    override fun enterInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount) {
+        delegateBuilder.enterInlinedSubroutine(subroutine, invocationCount)
+    }
+
+    override fun exitInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount): Pseudocode =
+            delegateBuilder.exitInlinedSubroutine(subroutine, invocationCount)
+
     override val currentSubroutine: KtElement
         get() = delegateBuilder.currentSubroutine
 
@@ -176,6 +184,10 @@ abstract class ControlFlowBuilderAdapter : ControlFlowBuilder {
 
     override fun declareFunction(subroutine: KtElement, pseudocode: Pseudocode) {
         delegateBuilder.declareFunction(subroutine, pseudocode)
+    }
+
+    override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationCount: ESCalls.InvocationCount) {
+        delegateBuilder.declareInlinedFunction(subroutine, pseudocode, invocationCount)
     }
 
     override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

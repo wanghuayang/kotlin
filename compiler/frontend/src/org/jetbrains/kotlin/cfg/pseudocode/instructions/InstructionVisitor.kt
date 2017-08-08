@@ -33,6 +33,10 @@ open class InstructionVisitor {
         visitInstructionWithNext(instruction)
     }
 
+    open fun visitInlinedDeclarationInstruction(instruction: InlinedDeclarationInstruction) {
+        TODO("DEBUG MODE, SHOUDLN'T GET HERE")
+    }
+
     open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction) {
         visitInstructionWithNext(instruction)
     }

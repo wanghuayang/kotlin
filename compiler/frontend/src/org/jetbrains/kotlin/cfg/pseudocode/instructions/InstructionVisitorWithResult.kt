@@ -30,6 +30,8 @@ abstract class InstructionVisitorWithResult<out R> {
     open fun visitLocalFunctionDeclarationInstruction(instruction: LocalFunctionDeclarationInstruction): R =
             visitInstructionWithNext(instruction)
 
+    open fun visitInlinedDeclarationInstruction(instruction: InlinedDeclarationInstruction): R = TODO("DEBUG MODE, SHOULDN'T BE HERE")
+
     open fun visitVariableDeclarationInstruction(instruction: VariableDeclarationInstruction): R = visitInstructionWithNext(instruction)
 
     open fun visitUnconditionalJump(instruction: UnconditionalJumpInstruction): R = visitJump(instruction)
