@@ -64,9 +64,10 @@ internal fun JCTree.annotations(): Collection<JCTree.JCAnnotation> = when (this)
 
 fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotation> {
     val filteredAnnotations = arrayListOf<JavaAnnotation>()
+    val targetClassId = ClassId(FqName("java.lang.annotation"), Name.identifier("Target"))
     for (annotation in this) {
         val annotationClass = annotation.resolve()
-        val targetAnnotation = annotationClass?.annotations?.find { it.classId == ClassId(FqName("java.lang.annotation"), Name.identifier("Target")) } ?: continue
+        val targetAnnotation = annotationClass?.annotations?.find { it.classId == targetClassId } ?: continue
         val elementTypeArg = targetAnnotation.arguments.firstOrNull() ?: continue
 
         when (elementTypeArg) {

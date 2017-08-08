@@ -72,13 +72,7 @@ class TreeBasedClass(
         }
 
     override val fqName: FqName
-        get() = treePath.reversed()
-                .filterIsInstance<JCTree.JCClassDecl>()
-                .joinToString(
-                        separator = ".",
-                        transform = JCTree.JCClassDecl::name
-                )
-                .let { treePath.compilationUnit.packageName?.let { packageName -> FqName("$packageName.$it") } ?: FqName.topLevel(Name.identifier(it)) }
+        get() = classId?.asSingleFqName() ?: throw UnsupportedOperationException("classId of $name is null")
 
     override val supertypes: Collection<JavaClassifierType>
             by lazy {
