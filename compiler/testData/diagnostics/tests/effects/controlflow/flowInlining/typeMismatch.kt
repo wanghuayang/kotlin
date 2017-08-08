@@ -6,6 +6,7 @@ fun <T> myRun(@CalledInPlace block: () -> T): T = block()
 
 fun foo(x: Int): Int = x + 1
 
-fun typeMismatchInLambda(y: String) {
-    val x = myRun { foo(y) }
+fun typeMismatchInLambda(y: String): Int {
+    val x = myRun { foo(<!TYPE_MISMATCH!>y<!>) }
+    return x
 }

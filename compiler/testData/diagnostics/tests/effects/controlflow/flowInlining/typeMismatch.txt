@@ -2,4 +2,4 @@ package
 
 public fun foo(/*0*/ x: kotlin.Int): kotlin.Int
 public fun </*0*/ T> myRun(/*0*/ @kotlin.internal.CalledInPlace block: () -> T): T
-public fun typeMismatchInLambda(/*0*/ y: kotlin.String): kotlin.Unit
+public fun typeMismatchInLambda(/*0*/ y: kotlin.String): kotlin.Int

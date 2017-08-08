@@ -40,10 +40,10 @@ class PseudocodeVariableDataCollector(
             instructionDataMergeStrategy: (Instruction, Collection<I>) -> Edges<I>
     ): Map<Instruction, Edges<I>> {
         return pseudocode.collectData(
-                traversalOrder,
-                instructionDataMergeStrategy,
-                { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
-                initialInfo
+                traversalOrder = traversalOrder,
+                mergeEdges = instructionDataMergeStrategy,
+                updateEdge = { from, to, info -> filterOutVariablesOutOfScope(from, to, info) },
+                initialInfo = initialInfo
         )
     }
 
@@ -52,6 +52,9 @@ class PseudocodeVariableDataCollector(
             to: Instruction,
             info: I
     ): I {
+        // Comment inconsistent with next two code lines? It says about "going from deeper scope to less deep one", but
+        // in fact code covers the case when edge descends down the scopes hierarchy
+
         // If an edge goes from deeper scope to a less deep one, this means that it points outside of the deeper scope.
         val toDepth = to.blockScope.depth
         if (toDepth >= from.blockScope.depth) return info
@@ -85,6 +88,8 @@ class PseudocodeVariableDataCollector(
 }
 
 interface BlockScopeVariableInfo {
+    // Naming is so bad. It should be rather `declarationScope` or even `variableToDeclarationScope`, but
+    // currently it reads so bad `blockScopeVariableInfo.declaredIn[someVariable]`. Something declared in variable? Or what?
     val declaredIn : Map<VariableDescriptor, BlockScope>
     val scopeVariables : Map<BlockScope, Collection<VariableDescriptor>>
 }
