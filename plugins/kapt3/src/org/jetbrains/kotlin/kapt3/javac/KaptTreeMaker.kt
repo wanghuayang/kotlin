@@ -16,28 +16,34 @@
 
 package org.jetbrains.kotlin.kapt3.javac
 
+import com.intellij.psi.JavaPsiFacade
+import com.intellij.psi.PsiClass
+import com.intellij.psi.search.GlobalSearchScope
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.tree.TreeMaker
 import com.sun.tools.javac.util.Context
+import com.sun.tools.javac.util.Name
 import com.sun.tools.javac.util.Names
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.kapt3.KaptContext
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.Type.*
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
-class KaptTreeMaker(context: Context) : TreeMaker(context) {
-    val nameTable = Names.instance(context).table
+class KaptTreeMaker(context: Context, private val kaptContext: KaptContext<*>) : TreeMaker(context) {
+    val nameTable: Name.Table = Names.instance(context).table
 
     fun Type(type: Type): JCTree.JCExpression {
         convertBuiltinType(type)?.let { return it }
         if (type.sort == ARRAY) {
             return TypeArray(Type(AsmUtil.correctElementType(type)))
         }
-        return FqName(type.className)
+        return FqName(type.internalName)
     }
 
     fun FqName(internalOrFqName: String): JCTree.JCExpression {
-        val path = internalOrFqName.replace('/', '.').convertSpecialFqName().split('.')
+        val path = getQualifiedName(internalOrFqName.replace('/', '.')).convertSpecialFqName().split('.')
         assert(path.isNotEmpty())
         if (path.size == 1) return SimpleName(path.single())
 
@@ -46,6 +52,43 @@ class KaptTreeMaker(context: Context) : TreeMaker(context) {
             expr = Select(expr, name(path[index]))
         }
         return expr
+    }
+
+    fun getQualifiedName(type: Type) = getQualifiedName(type.internalName)
+
+    fun getSimpleName(clazz: ClassNode) = getQualifiedName(clazz.name).substringAfterLast('.')
+
+    fun getQualifiedName(internalName: String): String {
+        val nameWithDots = internalName.replace('/', '.')
+        // This is a top-level class
+        if ('$' !in nameWithDots) return nameWithDots
+
+        // Maybe it's in our sources?
+        val classFromSources = kaptContext.compiledClasses.firstOrNull { it.name == internalName }
+        if (classFromSources != null) {
+            // Get inner class node pointing to the outer class
+            val innerClassNode = classFromSources.innerClasses.firstOrNull { it.name == classFromSources.name }
+            return innerClassNode?.let { getQualifiedName(it.outerName) + "." + it.innerName } ?: nameWithDots
+        }
+
+        // Search in the classpath
+        return tryToFindNestedClass(nameWithDots)?.qualifiedName ?: return nameWithDots
+
+    }
+
+    private fun tryToFindNestedClass(nameWithDots: String): PsiClass? {
+        assert('$' in nameWithDots)
+        val (outerClassName, nestedClassNames) = nameWithDots.split('$').let { it.first() to it.drop(1) }
+        assert(nestedClassNames.isNotEmpty())
+
+        val project = kaptContext.project
+        var clazz = JavaPsiFacade.getInstance(project).findClass(outerClassName, GlobalSearchScope.allScope(project)) ?: return null
+
+        for (nestedClassName in nestedClassNames) {
+            clazz = clazz.findInnerClassByName(nestedClassName, false) ?: return null
+        }
+
+        return clazz
     }
 
     private fun String.convertSpecialFqName(): String {
@@ -57,7 +100,7 @@ class KaptTreeMaker(context: Context) : TreeMaker(context) {
         return this
     }
 
-    fun convertBuiltinType(type: Type): JCTree.JCExpression? {
+    private fun convertBuiltinType(type: Type): JCTree.JCExpression? {
         val typeTag = when (type) {
             BYTE_TYPE -> TypeTag.BYTE
             BOOLEAN_TYPE -> TypeTag.BOOLEAN
@@ -75,11 +118,11 @@ class KaptTreeMaker(context: Context) : TreeMaker(context) {
 
     fun SimpleName(name: String): JCTree.JCExpression = Ident(name(name))
 
-    fun name(name: String) = nameTable.fromString(name)
+    fun name(name: String): Name = nameTable.fromString(name)
 
     companion object {
-        internal fun preRegister(context: Context) {
-            context.put(treeMakerKey, Context.Factory<TreeMaker>(::KaptTreeMaker))
+        internal fun preRegister(context: Context, kaptContext: KaptContext<*>) {
+            context.put(treeMakerKey, Context.Factory<TreeMaker> { KaptTreeMaker(it, kaptContext) })
         }
     }
 }
