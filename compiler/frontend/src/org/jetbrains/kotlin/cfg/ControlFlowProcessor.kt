@@ -111,7 +111,15 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
     }
 
     private fun processInlinedLambda(lambdaFunctionLiteral: KtFunctionLiteral, invocationCount: ESCalls.InvocationCount) {
-        //TODO: undeterministic jump if visit not guaranteed
+        val beforeLambda = builder.createUnboundLabel("before inlined lambda")
+        val afterLambda = builder.createUnboundLabel("after inlined lambda")
+
+        builder.bindLabel(beforeLambda)
+
+        // nonndeterministic jump if visit not guaranteed
+        if (invocationCount != ESCalls.InvocationCount.EXACTLY_ONCE && invocationCount != ESCalls.InvocationCount.AT_LEAST_ONCE)  {
+            builder.nondeterministicJump(afterLambda, lambdaFunctionLiteral, null)
+        }
 
         // generate(subroutine) peeled
         builder.enterInlinedSubroutine(lambdaFunctionLiteral, invocationCount)
@@ -130,12 +138,14 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
         builder.exitInlinedSubroutine(lambdaFunctionLiteral, invocationCount)
 
-        //TODO: undeterministic jump if revisit possible
+        // nondeterministic jump if revisit possible
+        if (invocationCount != ESCalls.InvocationCount.EXACTLY_ONCE && invocationCount != ESCalls.InvocationCount.AT_MOST_ONCE) {
+            builder.nondeterministicJump(beforeLambda, lambdaFunctionLiteral, null)
+        }
 
-        // after all
+        builder.bindLabel(afterLambda)
+
         builder.createLambda(lambdaFunctionLiteral)
-
-        // generate(subroutine) returning pseudocode, but for local declaration it is not needed
     }
 
     private class CatchFinallyLabels(val onException: Label?, val toFinally: Label?, val tryExpression: KtTryExpression?)
