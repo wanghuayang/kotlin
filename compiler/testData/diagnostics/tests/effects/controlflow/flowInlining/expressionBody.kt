@@ -2,9 +2,9 @@
 
 import kotlin.internal.*
 
-fun <T> myRun(@CalledInPlace block: () -> T): T = block()
+inline fun <T> myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> T): T = block()
 
-fun functionWithExpressionBody(x: Int) = myRun {
+fun functionWithExpressionBody(x: Int): Boolean = myRun {
     if (x == 0) return true
     if (x == 1) return false
     return functionWithExpressionBody(x - 2)
