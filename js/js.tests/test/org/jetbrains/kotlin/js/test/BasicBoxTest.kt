@@ -504,9 +504,9 @@ abstract class BasicBoxTest(
 
             configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, IncrementalResultsConsumerImpl())
         }
+        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile || generateSourceMap)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, module.sourceMapSourceEmbedding)
-        configuration.put(JSConfigurationKeys.SOURCE_MAP, hasFilesToRecompile)
 
         if (typedArraysEnabled) {
             configuration.put(JSConfigurationKeys.TYPED_ARRAYS_ENABLED, true)
