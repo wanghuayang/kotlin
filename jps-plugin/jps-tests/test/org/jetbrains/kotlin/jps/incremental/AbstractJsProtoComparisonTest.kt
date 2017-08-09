@@ -40,7 +40,7 @@ import java.io.File
 
 abstract class AbstractJsProtoComparisonTest : AbstractProtoComparisonTest<ProtoData>() {
     override fun expectedOutputFile(testDir: File): File =
-        File(testDir, "js.result.out")
+        File(testDir, "result-js.out")
                 .takeIf { it.exists() }
                 ?: super.expectedOutputFile(testDir)
 
