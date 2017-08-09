@@ -1,3 +1,0 @@
-ADDED test/IntermediateImpl
-PROTO DIFFERENCE in test/Intermediate: SEALED_SUBCLASS_FQ_NAME_LIST
-CHANGES in test/Intermediate: CLASS_SIGNATURE
