@@ -7247,9 +7247,21 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                         doTest(fileName);
                     }
 
+                    @TestMetadata("nonLocalReturn.kt")
+                    public void testNonLocalReturn() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/nonLocalReturn.kt");
+                        doTest(fileName);
+                    }
+
                     @TestMetadata("typeMismatch.kt")
                     public void testTypeMismatch() throws Exception {
                         String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/typeMismatch.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("unreachableCode.kt")
+                    public void testUnreachableCode() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/flowInlining/unreachableCode.kt");
                         doTest(fileName);
                     }
                 }
@@ -7324,6 +7336,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                         @TestMetadata("varIndefiniteInitialization.kt")
                         public void testVarIndefiniteInitialization() throws Exception {
                             String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/varIndefiniteInitialization.kt");
+                            doTest(fileName);
+                        }
+
+                        @TestMetadata("withReceiver.kt")
+                        public void testWithReceiver() throws Exception {
+                            String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/effects/controlflow/initialization/exactlyOnce/withReceiver.kt");
                             doTest(fileName);
                         }
                     }

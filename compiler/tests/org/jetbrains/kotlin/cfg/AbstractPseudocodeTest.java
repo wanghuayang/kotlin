@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeLabel;
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionImpl;
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.InlinedDeclarationInstruction;
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.psi.*;
@@ -88,6 +89,11 @@ public abstract class AbstractPseudocodeTest extends KotlinTestWithEnvironment {
         Pseudocode pseudocode = PseudocodeUtil.generatePseudocode(declaration, bindingContext);
         data.put(declaration, pseudocode);
         for (LocalFunctionDeclarationInstruction instruction : pseudocode.getLocalDeclarations()) {
+            Pseudocode localPseudocode = instruction.getBody();
+            data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
+        }
+
+        for (InlinedDeclarationInstruction instruction : pseudocode.getLocalInlinedDeclarations()) {
             Pseudocode localPseudocode = instruction.getBody();
             data.put(localPseudocode.getCorrespondingElement(), localPseudocode);
         }

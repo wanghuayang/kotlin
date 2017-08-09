@@ -234,10 +234,10 @@ enum class TraversalOrder {
 }
 
 fun Pseudocode.getStartInstruction(traversalOrder: TraversalOrder): Instruction =
-        if (traversalOrder == FORWARD) enterInstruction else sinkInstruction
+        if (traversalOrder == FORWARD) instructions.first() else instructions.last()
 
 fun Pseudocode.getLastInstruction(traversalOrder: TraversalOrder): Instruction =
-        if (traversalOrder == FORWARD) sinkInstruction else enterInstruction
+        if (traversalOrder == FORWARD) instructions.last() else instructions.first()
 
 fun Pseudocode.getInstructions(traversalOrder: TraversalOrder): List<Instruction> =
         if (traversalOrder == FORWARD) instructions else reversedInstructions

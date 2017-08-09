@@ -53,7 +53,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         getLocalDeclarations(this)
     }
 
-    val localInlinedDeclarations: Set<InlinedDeclarationInstruction> by lazy {
+    override val localInlinedDeclarations: Set<InlinedDeclarationInstruction> by lazy {
         getInlinedDeclarations(this)
     }
 
@@ -338,15 +338,15 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
             }
             TraverseInstructionResult.CONTINUE
         }
-        if (!visited.contains(exitInstruction)) {
-            visited.add(exitInstruction)
-        }
-        if (!visited.contains(errorInstruction)) {
-            visited.add(errorInstruction)
-        }
-        if (!visited.contains(sinkInstruction)) {
-            visited.add(sinkInstruction)
-        }
+//        if (!visited.contains(exitInstruction)) {
+//            visited.add(exitInstruction)
+//        }
+//        if (!visited.contains(errorInstruction)) {
+//            visited.add(errorInstruction)
+//        }
+//        if (!visited.contains(sinkInstruction)) {
+//            visited.add(sinkInstruction)
+//        }
         return visited
     }
 

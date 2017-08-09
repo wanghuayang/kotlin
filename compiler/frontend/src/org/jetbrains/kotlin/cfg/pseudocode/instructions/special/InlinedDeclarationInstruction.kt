@@ -27,13 +27,11 @@ class InlinedDeclarationInstruction (
         blockScope: BlockScope,
         val count: ESCalls.InvocationCount
 ) : InstructionWithNext(element, blockScope) {
-    val isBodyDefinitelyVisited: Boolean = count == ESCalls.InvocationCount.EXACTLY_ONCE || count == ESCalls.InvocationCount.AT_LEAST_ONCE
-
-    val canBodyBeRevisited: Boolean = count == ESCalls.InvocationCount.AT_LEAST_ONCE || count == ESCalls.InvocationCount.UNKNOWN
-
     override fun createCopy(): InstructionImpl = InlinedDeclarationInstruction(element, body, blockScope, count)
 
     override fun accept(visitor: InstructionVisitor) = visitor.visitInlinedDeclarationInstruction(this)
 
     override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitInlinedDeclarationInstruction(this)
+
+    override fun toString(): String = "inlined(${render(element)})"
 }

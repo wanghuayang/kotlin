@@ -162,6 +162,33 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
         }
     }
 
+    @TestMetadata("compiler/testData/cfg-variables/effects")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Effects extends AbstractDataFlowTest {
+        public void testAllFilesPresentInEffects() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("compiler/testData/cfg-variables/effects/controlflow")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Controlflow extends AbstractDataFlowTest {
+            public void testAllFilesPresentInControlflow() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Initialization extends AbstractDataFlowTest {
+                public void testAllFilesPresentInInitialization() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow/initialization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+            }
+        }
+    }
+
     @TestMetadata("compiler/testData/cfg-variables/lexicalScopes")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

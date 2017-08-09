@@ -18,10 +18,7 @@ package org.jetbrains.kotlin.cfg.pseudocode
 
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineExitInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
+import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 import org.jetbrains.kotlin.psi.KtElement
 
 interface Pseudocode {
@@ -30,6 +27,8 @@ interface Pseudocode {
     val parent: Pseudocode?
 
     val localDeclarations: Set<LocalFunctionDeclarationInstruction>
+
+    val localInlinedDeclarations: Set<InlinedDeclarationInstruction>
 
     val instructions: List<Instruction>
 
