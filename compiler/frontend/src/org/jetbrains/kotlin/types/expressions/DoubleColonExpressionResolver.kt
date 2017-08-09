@@ -338,7 +338,7 @@ class DoubleColonExpressionResolver(
             val lhs = resultForExpr.lhs
             // If expression result is an object, we remember this and skip it here, because there are valid situations where
             // another type (representing another classifier) should win
-            if (lhs != null && !lhs.isObjectQualifier) {
+            if (lhs != null && !lhs.isObjectQualifier && lhs.typeInfo.type?.isError == false) {
                 return resultForExpr.commit()
             }
         }
