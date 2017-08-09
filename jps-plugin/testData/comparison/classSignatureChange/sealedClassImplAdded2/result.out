@@ -1,0 +1,4 @@
+PROTO DIFFERENCE in test/Intermediate: SEALED_SUBCLASS_FQ_NAME_LIST
+CHANGES in test/Intermediate: CLASS_SIGNATURE
+PROTO DIFFERENCE in test/IntermediateImpl: SUPERTYPE_LIST
+CHANGES in test/IntermediateImpl: CLASS_SIGNATURE

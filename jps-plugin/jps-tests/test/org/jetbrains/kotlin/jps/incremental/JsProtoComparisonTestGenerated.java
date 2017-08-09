@@ -67,6 +67,30 @@ public class JsProtoComparisonTestGenerated extends AbstractJsProtoComparisonTes
             String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/classWithSuperTypeListChanged/");
             doTest(fileName);
         }
+
+        @TestMetadata("sealedClassImplAdded1")
+        public void testSealedClassImplAdded1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded1/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassImplAdded2")
+        public void testSealedClassImplAdded2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplAdded2/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassImplRemoved1")
+        public void testSealedClassImplRemoved1() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved1/");
+            doTest(fileName);
+        }
+
+        @TestMetadata("sealedClassImplRemoved2")
+        public void testSealedClassImplRemoved2() throws Exception {
+            String fileName = KotlinTestUtils.navigationMetadata("jps-plugin/testData/comparison/classSignatureChange/sealedClassImplRemoved2/");
+            doTest(fileName);
+        }
     }
 
     @TestMetadata("jps-plugin/testData/comparison/classPrivateOnlyChange")
