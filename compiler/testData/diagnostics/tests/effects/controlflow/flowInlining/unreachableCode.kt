@@ -2,7 +2,7 @@
 
 import kotlin.internal.*
 
-fun <T> myRun(@CalledInPlace block: () -> T): T = block()
+inline fun myRun(@CalledInPlace(InvocationCount.EXACTLY_ONCE) block: () -> Unit) = block()
 
 fun throwInLambda(): Int {
     <!UNREACHABLE_CODE!>val <!UNUSED_VARIABLE!>x<!> =<!> myRun { throw java.lang.IllegalArgumentException() }

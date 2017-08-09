@@ -178,12 +178,138 @@ public class DataFlowTestGenerated extends AbstractDataFlowTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("compiler/testData/cfg-variables/effects/controlflow/flowInlining")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FlowInlining extends AbstractDataFlowTest {
+                public void testAllFilesPresentInFlowInlining() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow/flowInlining"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("expressionBody.kt")
+                public void testExpressionBody() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/flowInlining/expressionBody.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("implicitCastToAnyInReturnType.kt")
+                public void testImplicitCastToAnyInReturnType() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/flowInlining/implicitCastToAnyInReturnType.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("nonLocalReturn.kt")
+                public void testNonLocalReturn() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/flowInlining/nonLocalReturn.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("typeMismatch.kt")
+                public void testTypeMismatch() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/flowInlining/typeMismatch.kt");
+                    doTest(fileName);
+                }
+
+                @TestMetadata("unreachableCode.kt")
+                public void testUnreachableCode() throws Exception {
+                    String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/flowInlining/unreachableCode.kt");
+                    doTest(fileName);
+                }
+            }
+
             @TestMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Initialization extends AbstractDataFlowTest {
                 public void testAllFilesPresentInInitialization() throws Exception {
                     KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow/initialization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/atLeastOnce")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class AtLeastOnce extends AbstractDataFlowTest {
+                    public void testAllFilesPresentInAtLeastOnce() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow/initialization/atLeastOnce"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("valDefiniteReassignment.kt")
+                    public void testValDefiniteReassignment() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/atLeastOnce/valDefiniteReassignment.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("varDefiniteInitialization.kt")
+                    public void testVarDefiniteInitialization() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/atLeastOnce/varDefiniteInitialization.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("varIndefiniteIntialization.kt")
+                    public void testVarIndefiniteIntialization() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/atLeastOnce/varIndefiniteIntialization.kt");
+                        doTest(fileName);
+                    }
+                }
+
+                @TestMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class ExactlyOnce extends AbstractDataFlowTest {
+                    public void testAllFilesPresentInExactlyOnce() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("valDefiniteInitialization.kt")
+                    public void testValDefiniteInitialization() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce/valDefiniteInitialization.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("valDefiniteReassignment.kt")
+                    public void testValDefiniteReassignment() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce/valDefiniteReassignment.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("valIndefiniteInitialization.kt")
+                    public void testValIndefiniteInitialization() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce/valIndefiniteInitialization.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("varDefiniteInitalization.kt")
+                    public void testVarDefiniteInitalization() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce/varDefiniteInitalization.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("varIndefiniteInitialization.kt")
+                    public void testVarIndefiniteInitialization() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce/varIndefiniteInitialization.kt");
+                        doTest(fileName);
+                    }
+
+                    @TestMetadata("withReceiver.kt")
+                    public void testWithReceiver() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/exactlyOnce/withReceiver.kt");
+                        doTest(fileName);
+                    }
+                }
+
+                @TestMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/unknown")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Unknown extends AbstractDataFlowTest {
+                    public void testAllFilesPresentInUnknown() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/cfg-variables/effects/controlflow/initialization/unknown"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("unknownInvocations.kt")
+                    public void testUnknownInvocations() throws Exception {
+                        String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/cfg-variables/effects/controlflow/initialization/unknown/unknownInvocations.kt");
+                        doTest(fileName);
+                    }
                 }
             }
         }
