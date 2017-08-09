@@ -21,17 +21,17 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.effectsystem.effects.ESCalls
 import org.jetbrains.kotlin.psi.KtElement
 
-class InlinedDeclarationInstruction (
+class InlinedLocalFunctionDeclarationInstruction(
         element: KtElement,
-        val body: Pseudocode,
+        body: Pseudocode,
         blockScope: BlockScope,
         val count: ESCalls.InvocationCount
-) : InstructionWithNext(element, blockScope) {
-    override fun createCopy(): InstructionImpl = InlinedDeclarationInstruction(element, body, blockScope, count)
+) : LocalFunctionDeclarationInstruction(element, body, blockScope) {
+    override fun createCopy(): InstructionImpl = InlinedLocalFunctionDeclarationInstruction(element, body, blockScope, count)
 
-    override fun accept(visitor: InstructionVisitor) = visitor.visitInlinedDeclarationInstruction(this)
+    override fun accept(visitor: InstructionVisitor) = visitor.visitInlinedLocalFunctionDeclarationInstruction(this)
 
-    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitInlinedDeclarationInstruction(this)
+    override fun <R> accept(visitor: InstructionVisitorWithResult<R>): R = visitor.visitInlinedFunctionDeclarationInstruction(this)
 
     override fun toString(): String = "inlined(${render(element)})"
 }

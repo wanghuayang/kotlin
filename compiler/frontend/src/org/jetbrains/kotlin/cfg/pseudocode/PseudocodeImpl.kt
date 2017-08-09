@@ -53,10 +53,6 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         getLocalDeclarations(this)
     }
 
-    override val localInlinedDeclarations: Set<InlinedDeclarationInstruction> by lazy {
-        getInlinedDeclarations(this)
-    }
-
     private val representativeInstructions = HashMap<KtElement, KtElementInstruction>()
 
     private val labels = ArrayList<PseudocodeLabel>()
@@ -85,27 +81,8 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
                 localDeclarations.add(instruction)
                 localDeclarations.addAll(getLocalDeclarations(instruction.body))
             }
-
-            if (instruction is InlinedDeclarationInstruction) {
-                localDeclarations.addAll(getLocalDeclarations(instruction.body))
-            }
         }
         return localDeclarations
-    }
-
-    private fun getInlinedDeclarations(pseudocode: Pseudocode): Set<InlinedDeclarationInstruction> {
-        val inlinedDeclarations = linkedSetOf<InlinedDeclarationInstruction>()
-        for (instruction in (pseudocode as PseudocodeImpl).mutableInstructionList) {
-            if (instruction is LocalFunctionDeclarationInstruction) {
-                inlinedDeclarations.addAll(getInlinedDeclarations(instruction.body))
-            }
-
-            if (instruction is InlinedDeclarationInstruction) {
-                inlinedDeclarations.add(instruction)
-                inlinedDeclarations.addAll(getInlinedDeclarations(instruction.body))
-            }
-        }
-        return inlinedDeclarations
     }
 
     val rootPseudocode: Pseudocode
@@ -253,10 +230,6 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
         for (localFunctionDeclarationInstruction in localDeclarations) {
             (localFunctionDeclarationInstruction.body as PseudocodeImpl).collectAndCacheReachableInstructions()
         }
-
-        for (localInlinedDeclarationInstruction in localInlinedDeclarations) {
-            (localInlinedDeclarationInstruction.body as PseudocodeImpl).collectAndCacheReachableInstructions()
-        }
     }
 
     private fun collectAndCacheReachableInstructions() {
@@ -308,10 +281,11 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
                 instruction.next = sinkInstruction
             }
 
-            override fun visitInlinedDeclarationInstruction(instruction: InlinedDeclarationInstruction) {
+            override fun visitInlinedLocalFunctionDeclarationInstruction(instruction: InlinedLocalFunctionDeclarationInstruction) {
                 val body = instruction.body as PseudocodeImpl
                 body.parent = this@PseudocodeImpl
                 body.postProcess()
+                // note that inlined declaration leads to next instruction instead of sink
                 instruction.next = getNextPosition(currentPosition)
             }
 

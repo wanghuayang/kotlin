@@ -28,8 +28,6 @@ interface Pseudocode {
 
     val localDeclarations: Set<LocalFunctionDeclarationInstruction>
 
-    val localInlinedDeclarations: Set<InlinedDeclarationInstruction>
-
     val instructions: List<Instruction>
 
     val reversedInstructions: List<Instruction>

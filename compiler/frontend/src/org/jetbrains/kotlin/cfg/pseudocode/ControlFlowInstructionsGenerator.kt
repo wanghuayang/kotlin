@@ -99,11 +99,9 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
     }
 
     override fun exitInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount): Pseudocode {
-        // looks equivalent to delegateBuilder.exitSubroutine(subroutine)
-        super.exitSubroutine(subroutine)
+        super.exitInlinedSubroutine(subroutine, invocationCount)
         delegateBuilder.exitBlockScope(subroutine)
 
-        // this worker used to be delegateBuilder
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()
@@ -241,9 +239,8 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
             return pseudocode
         }
 
-        override fun exitInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount): Pseudocode {
-            return exitSubroutine(subroutine)
-        }
+        override fun exitInlinedSubroutine(subroutine: KtElement, invocationCount: ESCalls.InvocationCount): Pseudocode =
+                exitSubroutine(subroutine)
 
         override fun mark(element: KtElement) {
             add(MarkInstruction(element, currentScope))
@@ -291,7 +288,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
         }
 
         override fun declareInlinedFunction(subroutine: KtElement, pseudocode: Pseudocode, invocationCount: ESCalls.InvocationCount) {
-            add(InlinedDeclarationInstruction(subroutine, pseudocode, currentScope, invocationCount))
+            add(InlinedLocalFunctionDeclarationInstruction(subroutine, pseudocode, currentScope, invocationCount))
         }
 
         override fun declareEntryOrObject(entryOrObject: KtClassOrObject) {

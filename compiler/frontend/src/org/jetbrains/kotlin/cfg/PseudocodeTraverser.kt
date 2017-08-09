@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.cfg.pseudocodeTraverser
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.InlinedDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineEnterInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.SubroutineSinkInstruction
@@ -35,10 +34,6 @@ fun Pseudocode.traverse(
         if (instruction is LocalFunctionDeclarationInstruction) {
             instruction.body.traverse(traversalOrder, analyzeInstruction)
         }
-
-        if (instruction is InlinedDeclarationInstruction) {
-            instruction.body.traverse(traversalOrder, analyzeInstruction)
-        }
         analyzeInstruction(instruction)
     }
 }
@@ -51,10 +46,6 @@ fun <D> Pseudocode.traverse(
     val instructions = getInstructions(traversalOrder)
     for (instruction in instructions) {
         if (instruction is LocalFunctionDeclarationInstruction) {
-            instruction.body.traverse(traversalOrder, edgesMap, analyzeInstruction)
-        }
-
-        if (instruction is InlinedDeclarationInstruction) {
             instruction.body.traverse(traversalOrder, edgesMap, analyzeInstruction)
         }
         val edges = edgesMap[instruction]
@@ -118,19 +109,6 @@ private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
             // now take last instruction in local function body and just use
             // its info as an info of LocalFunctionDeclarationInstruction itself
             val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
-            val previousValue = edgesMap[instruction]
-            val newValue = edgesMap[lastInstruction]
-            val updatedValue = newValue?.let {
-                Edges(updateEdge(lastInstruction, instruction, it.incoming), updateEdge(lastInstruction, instruction, it.outgoing))
-            }
-            updateEdgeDataForInstruction(instruction, previousValue, updatedValue, edgesMap, changed)
-            continue
-        }
-
-        if (instruction is InlinedDeclarationInstruction) {
-            val inlinedPseudocode = instruction.body
-            inlinedPseudocode.collectDataFromSubgraph(traversalOrder, edgesMap, mergeEdges, updateEdge, previousInstructions, changed, true)
-            val lastInstruction = inlinedPseudocode.getLastInstruction(traversalOrder)
             val previousValue = edgesMap[instruction]
             val newValue = edgesMap[lastInstruction]
             val updatedValue = newValue?.let {

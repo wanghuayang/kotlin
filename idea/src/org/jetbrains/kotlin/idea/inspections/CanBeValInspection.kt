@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.AccessTarget
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.WriteValueInstruction
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.InlinedDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -108,10 +107,6 @@ class CanBeValInspection : AbstractKotlinInspection() {
 
                         filterIsInstance<LocalFunctionDeclarationInstruction>()
                         .map { it.body.collectWriteInstructions(descriptor) }
-                        .flatten() +
-
-                        filterIsInstance<InlinedDeclarationInstruction>()
-                        .map { it.body.collectWriteInstructions(descriptor) }
                         .flatten()
                     }
 
@@ -120,9 +115,6 @@ class CanBeValInspection : AbstractKotlinInspection() {
                 var instruction = from
                 while (instruction is InstructionWithNext) {
                     if (instruction is LocalFunctionDeclarationInstruction) {
-                        if (canReach(instruction.body.enterInstruction, targets, visited)) return true
-                    }
-                    if (instruction is InlinedDeclarationInstruction) {
                         if (canReach(instruction.body.enterInstruction, targets, visited)) return true
                     }
                     val next = instruction.next ?: return false

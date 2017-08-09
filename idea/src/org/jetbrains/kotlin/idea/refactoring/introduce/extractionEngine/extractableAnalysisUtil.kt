@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.cfg.pseudocode.instructions.InstructionWithNext
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.KtElementInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
-import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.InlinedDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.LocalFunctionDeclarationInstruction
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.MarkInstruction
 import org.jetbrains.kotlin.cfg.pseudocodeTraverser.TraversalOrder
@@ -114,9 +113,6 @@ private fun List<Instruction>.getVarDescriptorsAccessedAfterwards(bindingContext
                     PseudocodeUtil.extractVariableDescriptorIfAny(it, bindingContext)?.let { accessedAfterwards.add(it) }
 
                 it is LocalFunctionDeclarationInstruction ->
-                    doTraversal(it.body.enterInstruction)
-
-                it is InlinedDeclarationInstruction ->
                     doTraversal(it.body.enterInstruction)
             }
 
@@ -280,7 +276,7 @@ private fun ExtractionData.analyzeControlFlow(
                 }
             }
 
-            else -> if (inst != null && inst !is LocalFunctionDeclarationInstruction && inst !is InlinedDeclarationInstruction) {
+            else -> if (inst != null && inst !is LocalFunctionDeclarationInstruction) {
                 defaultExits.add(inst)
             }
         }
