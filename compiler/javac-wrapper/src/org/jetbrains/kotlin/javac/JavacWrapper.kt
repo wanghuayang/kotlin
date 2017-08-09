@@ -137,7 +137,7 @@ class JavacWrapper(
             val packageName = unit.packageName?.toString() ?: ""
             val className = (classDeclaration as JCTree.JCClassDecl).simpleName.toString()
             val classId = classId(packageName, className)
-            classId to TreeBasedClass(classDeclaration, trees.getPath(unit, classDeclaration), this, unit.sourceFile, classId)
+            classId to TreeBasedClass(classDeclaration, unit, this, classId)
         }
     }.toMap()
 
@@ -154,7 +154,7 @@ class JavacWrapper(
                 it.sourceFile.isNameCompatible("package-info", JavaFileObject.Kind.SOURCE) &&
                 it.packageName != null
             }.associateBy({ FqName(it.packageName!!.toString()) }) { compilationUnit ->
-        compilationUnit.packageAnnotations.map { TreeBasedAnnotation(it, getTreePath(it, compilationUnit), this) }
+        compilationUnit.packageAnnotations.map { TreeBasedAnnotation(it, compilationUnit, this) }
     }
 
     val classifierResolver = ClassifierResolver(this)
@@ -271,11 +271,11 @@ class JavacWrapper(
 
     fun isDeprecated(typeMirror: TypeMirror) = isDeprecated(types.asElement(typeMirror))
 
-    fun resolve(treePath: TreePath): JavaClassifier? =
-            classifierResolver.resolve(treePath)
+    fun resolve(tree: JCTree, compilationUnit: CompilationUnitTree): JavaClassifier? =
+            classifierResolver.resolve(tree, compilationUnit)
 
-    fun resolveField(treePath: TreePath, containingClass: JavaClass): JavaField? =
-            identifierResolver.resolve(treePath, containingClass)
+    fun resolveField(tree: JCTree, compilationUnit: CompilationUnitTree, containingClass: JavaClass): JavaField? =
+            identifierResolver.resolve(tree, compilationUnit, containingClass)
 
     fun toVirtualFile(javaFileObject: JavaFileObject): VirtualFile? =
             javaFileObject.toUri().let { uri ->
@@ -295,8 +295,10 @@ class JavacWrapper(
                 null
             }
 
-    fun isDeprecatedInJavaDoc(treePath: TreePath) =
-            (trees.getDocCommentTree(treePath) as? DCTree.DCDocComment)?.comment?.isDeprecated ?: false
+    fun isDeprecatedInJavaDoc(tree: JCTree, compilationUnit: CompilationUnitTree) = trees.getPath(compilationUnit, tree)
+            ?.let { treePath ->
+                (trees.getDocCommentTree(treePath) as? DCTree.DCDocComment)?.comment?.isDeprecated ?: false
+            }
 
     private inline fun <reified T> Iterable<T>.toJavacList() = JavacList.from(this)
 

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
@@ -27,26 +27,26 @@ import org.jetbrains.kotlin.name.Name
 
 class TreeBasedTypeParameter(
         tree: JCTree.JCTypeParameter,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         javac: JavacWrapper
-) : TreeBasedElement<JCTree.JCTypeParameter>(tree, treePath, javac), JavaTypeParameter {
+) : TreeBasedElement<JCTree.JCTypeParameter>(tree, compilationUnit, javac), JavaTypeParameter {
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
 
     override val annotations: Collection<JavaAnnotation> by lazy {
-        tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) }
+        tree.annotations().map { TreeBasedAnnotation(it, compilationUnit, javac) }
     }
 
     override fun findAnnotation(fqName: FqName) =
             annotations.firstOrNull { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = javac.isDeprecatedInJavaDoc(treePath)
+        get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit) == true
 
     override val upperBounds: Collection<JavaClassifierType>
         get() = tree.bounds.mapNotNull {
-            TreeBasedType.create(it, TreePath(treePath, it), javac, emptyList()) as? JavaClassifierType
+            TreeBasedType.create(it, compilationUnit, javac, emptyList()) as? JavaClassifierType
         }
 
     override fun equals(other: Any?): Boolean {

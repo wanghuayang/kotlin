@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.javac.resolve
 
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.source.tree.Tree
 import com.sun.source.util.TreePath
 import com.sun.tools.javac.tree.JCTree
@@ -33,14 +34,14 @@ class ClassifierResolver(private val javac: JavacWrapper) {
     private val cache = hashMapOf<Tree, JavaClassifier?>()
     private val beingResolved = hashSetOf<Tree>()
 
-    fun resolve(treePath: TreePath): JavaClassifier? = with (treePath) {
-        if (cache.containsKey(leaf)) return cache[leaf]
-        if (treePath.leaf in beingResolved) return null
-        beingResolved(treePath.leaf)
+    fun resolve(tree: Tree, unit: CompilationUnitTree): JavaClassifier? {
+        if (cache.containsKey(tree)) return cache[tree]
+        if (tree in beingResolved) return null
+        beingResolved(tree)
 
-        return tryToResolve().apply {
-            cache[leaf] = this
-            removeBeingResolved(treePath.leaf)
+        return tryToResolve(tree, unit).apply {
+            cache[tree] = this
+            removeBeingResolved(tree)
         }
     }
 
@@ -89,11 +90,12 @@ class ClassifierResolver(private val javac: JavacWrapper) {
         return pathSegments.apply { add(builder.toString()) }
     }
 
-    private fun TreePath.tryToResolve(): JavaClassifier? {
-        val pathSegments = pathSegments(leaf.toString())
+    private fun tryToResolve(tree: Tree, unit: CompilationUnitTree): JavaClassifier? {
+        val pathSegments = pathSegments(tree.toString())
+        val treePath = javac.getTreePath(tree as JCTree, unit)
 
-        return tryToGetTypeParameterFromMethod()?.let { return it } ?:
-               createResolutionScope(this).findClass(pathSegments.first(), pathSegments)
+        return treePath.tryToGetTypeParameterFromMethod()?.let { return it } ?:
+               createResolutionScope(treePath).findClass(pathSegments.first(), pathSegments)
     }
 
     private fun TreePath.tryToGetTypeParameterFromMethod(): TreeBasedTypeParameter? =
@@ -101,7 +103,7 @@ class ClassifierResolver(private val javac: JavacWrapper) {
                     ?.typarams?.find { it.name.toString() == leaf.toString() }
                     ?.let {
                         TreeBasedTypeParameter(it,
-                                               javac.getTreePath(it, compilationUnit),
+                                               compilationUnit,
                                                javac)
                     }
 
@@ -112,7 +114,7 @@ class ClassifierResolver(private val javac: JavacWrapper) {
 private abstract class Scope(protected val javac: JavacWrapper,
                              protected val treePath: TreePath) {
 
-    protected val helper = ResolveHelper(javac, treePath)
+    protected val helper = ResolveHelper(javac, treePath.compilationUnit)
 
     abstract val parent: Scope?
 

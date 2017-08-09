@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.javac.wrappers.trees
 
-import com.sun.source.util.TreePath
+import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.name.Name
 
 class TreeBasedValueParameter(
         tree: JCTree.JCVariableDecl,
-        treePath: TreePath,
+        compilationUnit: CompilationUnitTree,
         javac: JavacWrapper
-) : TreeBasedElement<JCTree.JCVariableDecl>(tree, treePath, javac), JavaValueParameter {
+) : TreeBasedElement<JCTree.JCVariableDecl>(tree, compilationUnit, javac), JavaValueParameter {
 
     override val annotations: Collection<TreeBasedAnnotation> by lazy {
-        tree.annotations().map { TreeBasedAnnotation(it, treePath, javac) }
+        tree.annotations().map { TreeBasedAnnotation(it, compilationUnit, javac) }
     }
 
     override fun findAnnotation(fqName: FqName) =
@@ -41,13 +41,13 @@ class TreeBasedValueParameter(
                     .find { it.classId?.asSingleFqName() == fqName }
 
     override val isDeprecatedInJavaDoc: Boolean
-        get() = javac.isDeprecatedInJavaDoc(treePath)
+        get() = javac.isDeprecatedInJavaDoc(tree, compilationUnit) == true
 
     override val name: Name
         get() = Name.identifier(tree.name.toString())
 
     override val type: JavaType
-        get() = TreeBasedType.create(tree.getType(), treePath, javac, annotations)
+        get() = TreeBasedType.create(tree.getType(), compilationUnit, javac, annotations)
 
     override val isVararg: Boolean
         get() = tree.modifiers.flags and Flags.VARARGS != 0L
