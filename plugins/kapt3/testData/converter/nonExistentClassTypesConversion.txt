@@ -28,9 +28,9 @@ public final class MyType<T extends java.lang.Object> {
 import java.util.Calendar;
 import kotlin.reflect.KClass;
 
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST"})
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST", "ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL"})
 @kotlin.Metadata()
-@Ann(a = error.NonExistentClass.class)
+@Ann(a = FooBar.class, new java.lang.Class[]{FooBaz.class, FooFoo.class})
 public final class Test {
     @org.jetbrains.annotations.NotNull()
     public ABC a;

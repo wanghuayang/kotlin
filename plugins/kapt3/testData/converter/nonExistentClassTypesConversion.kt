@@ -6,10 +6,10 @@
 import java.util.Calendar
 import kotlin.reflect.KClass
 
-annotation class Ann(val a: KClass<*>)
+annotation class Ann(val a: KClass<*>, vararg b: KClass<*>)
 
-@Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST")
-@Ann(FooBar::class)
+@Suppress("UNRESOLVED_REFERENCE", "ANNOTATION_PARAMETER_MUST_BE_CONST", "ANNOTATION_PARAMETER_MUST_BE_KCLASS_LITERAL")
+@Ann(FooBar::class, FooBaz::class, FooFoo::class)
 class Test {
     lateinit var a: ABC
     val b: ABC? = null
