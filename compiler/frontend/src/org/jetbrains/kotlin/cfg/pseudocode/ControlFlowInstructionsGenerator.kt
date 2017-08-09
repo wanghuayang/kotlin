@@ -67,25 +67,20 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
     }
 
     override fun enterSubroutine(subroutine: KtElement) {
-        // here builder is a builder for declaration which contains subroutine
         val builder = builder
         if (builder != null && subroutine is KtFunctionLiteral) {
-            pushBuilder(subroutine, builder.returnSubroutine) // changes delegateBuilder
+            pushBuilder(subroutine, builder.returnSubroutine)
         }
         else {
             pushBuilder(subroutine, subroutine)
         }
-
-        // here delegateBuilder is a new builder, created in pushBuilder specifically for subroutine
         delegateBuilder.enterBlockScope(subroutine)
         delegateBuilder.enterSubroutine(subroutine)
     }
 
     override fun exitSubroutine(subroutine: KtElement): Pseudocode {
-        // looks equivalent to delegateBuilder.exitSubroutine(subroutine)
         super.exitSubroutine(subroutine)
         delegateBuilder.exitBlockScope(subroutine)
-        // this worker used to be delegateBuilder
         val worker = popBuilder()
         if (!builders.empty()) {
             val builder = builders.peek()

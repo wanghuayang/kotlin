@@ -83,17 +83,11 @@ private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
         changed: MutableMap<Instruction, Boolean>,
         isLocal: Boolean
 ) {
-    // updateEdge just filters  out variable out of scope just for performance reasons.
-    // can be thought of as an identity on the third argument
-
-    // updateEdgeDataForInstruction just does some trivial householding.
-    // Can be thought of as `edgesMap[instruction] = updatedValue`
     val instructions = getInstructions(traversalOrder)
     val startInstruction = getStartInstruction(traversalOrder)
 
     for (instruction in instructions) {
         val isStart = instruction.isStartInstruction(traversalOrder)
-        // for local declarations we have to analyze start instruction too because it will have some previous instructions
         if (!isLocal && isStart)
             continue
 
@@ -101,13 +95,8 @@ private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
 
         if (instruction is LocalFunctionDeclarationInstruction) {
             val subroutinePseudocode = instruction.body
-            // recursively visit local declaration's body
-            // it will receive current flow due to isLocal flag
             subroutinePseudocode.collectDataFromSubgraph(
                     traversalOrder, edgesMap, mergeEdges, updateEdge, previousInstructions, changed, true)
-
-            // now take last instruction in local function body and just use
-            // its info as an info of LocalFunctionDeclarationInstruction itself
             val lastInstruction = subroutinePseudocode.getLastInstruction(traversalOrder)
             val previousValue = edgesMap[instruction]
             val newValue = edgesMap[lastInstruction]
@@ -118,27 +107,22 @@ private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
             continue
         }
 
-        // just some additional measures to increase performance and prevent senseless actions:
-        // if we know that we already have evaluated info for this instruction, and none of the infos
-        // for previous instructions haven't changed => info for this instruction couldn't have changed
+
         val previousDataValue = edgesMap[instruction]
         if (previousDataValue != null && previousInstructions.all { changed[it] == false }) {
             changed[instruction] = false
             continue
         }
 
-        // collect incoming edges for this instruction == outgoing edges for previous instructions'
         val incomingEdgesData = HashSet<I>()
 
         for (previousInstruction in previousInstructions) {
             val previousData = edgesMap[previousInstruction]
-            // how it is possible that we don't have data for previous instruction?
             if (previousData != null) {
                 incomingEdgesData.add(updateEdge(
                         previousInstruction, instruction, previousData.outgoing))
             }
         }
-
         val mergedData = mergeEdges(instruction, incomingEdgesData)
         updateEdgeDataForInstruction(instruction, previousDataValue, mergedData, edgesMap, changed)
     }

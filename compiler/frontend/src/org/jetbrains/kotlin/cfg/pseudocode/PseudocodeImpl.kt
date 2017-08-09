@@ -312,15 +312,6 @@ class PseudocodeImpl(override val correspondingElement: KtElement) : Pseudocode 
             }
             TraverseInstructionResult.CONTINUE
         }
-//        if (!visited.contains(exitInstruction)) {
-//            visited.add(exitInstruction)
-//        }
-//        if (!visited.contains(errorInstruction)) {
-//            visited.add(errorInstruction)
-//        }
-//        if (!visited.contains(sinkInstruction)) {
-//            visited.add(sinkInstruction)
-//        }
         return visited
     }
 
