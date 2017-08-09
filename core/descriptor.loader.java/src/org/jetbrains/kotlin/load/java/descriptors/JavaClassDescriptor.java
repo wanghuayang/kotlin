@@ -21,9 +21,8 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.types.SimpleType;
 
 public interface JavaClassDescriptor extends ClassDescriptor {
-    // Use SingleAbstractMethodUtils.getFunctionTypeForSamInterface() where possible. This is only a fallback
     @Nullable
-    SimpleType getDefaultFunctionTypeForSamInterface();
+    SimpleType getFunctionTypeForSamInterface();
 
     /**
      * May return false even in case when the class is not SAM interface, but returns true only if it's definitely not a SAM.

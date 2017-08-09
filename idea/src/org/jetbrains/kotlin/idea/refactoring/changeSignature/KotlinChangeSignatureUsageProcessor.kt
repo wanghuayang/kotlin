@@ -401,7 +401,7 @@ class KotlinChangeSignatureUsageProcessor : ChangeSignatureUsageProcessor {
         if (method.containingClass == null) return
 
         val containingDescriptor = method.getJavaMethodDescriptor()?.containingDeclaration as? JavaClassDescriptor ?: return
-        if (containingDescriptor.defaultFunctionTypeForSamInterface == null) return
+        if (containingDescriptor.functionTypeForSamInterface == null) return
         val samClass = method.containingClass ?: return
 
         for (ref in ReferencesSearch.search(samClass)) {
