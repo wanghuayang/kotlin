@@ -23,6 +23,7 @@ import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractModuleDataService
 import com.intellij.openapi.util.Key
+import com.intellij.openapi.vfs.StandardFileSystems
 import org.gradle.api.Project
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder
@@ -38,13 +39,19 @@ var DataNode<ModuleData>.kaptModel by UserDataProperty(Key.create<KaptGradleMode
 
 interface KaptSourceSetModel : Serializable {
     val sourceSetName: String
+    val isTest: Boolean
     val generatedSourcesDir: String
     val generatedClassesDir: String
     val generatedKotlinSourcesDir: String
+
+    val generatedSourcesDirFile get() = generatedSourcesDir.takeIf { it.isNotEmpty() }?.let(::File)
+    val generatedClassesDirFile get() = generatedClassesDir.takeIf { it.isNotEmpty() }?.let(::File)
+    val generatedKotlinSourcesDirFile get() = generatedKotlinSourcesDir.takeIf { it.isNotEmpty() }?.let(::File)
 }
 
 class KaptSourceSetModelImpl(
         override val sourceSetName: String,
+        override val isTest: Boolean,
         override val generatedSourcesDir: String,
         override val generatedClassesDir: String,
         override val generatedKotlinSourcesDir: String
@@ -52,11 +59,13 @@ class KaptSourceSetModelImpl(
 
 interface KaptGradleModel : Serializable {
     val isEnabled: Boolean
+    val buildDirectory: File
     val sourceSets: List<KaptSourceSetModel>
 }
 
 class KaptGradleModelImpl(
         override val isEnabled: Boolean,
+        override val buildDirectory: File,
         override val sourceSets: List<KaptSourceSetModel>
 ) : KaptGradleModel
 
@@ -93,21 +102,23 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
                 if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
 
                 val sourceSetName = compileTask.getSourceSetName()
+                val isTest = sourceSetName.toLowerCase().endsWith("test")
 
                 val kaptGeneratedSourcesDir = getKaptDirectory("getKaptGeneratedSourcesDir", project, sourceSetName)
                 val kaptGeneratedClassesDir = getKaptDirectory("getKaptGeneratedClassesDir", project, sourceSetName)
                 val kaptGeneratedKotlinSourcesDir = getKaptDirectory("getKaptGeneratedKotlinSourcesDir", project, sourceSetName)
-                sourceSets += KaptSourceSetModelImpl(sourceSetName, kaptGeneratedSourcesDir, kaptGeneratedClassesDir, kaptGeneratedKotlinSourcesDir)
+                sourceSets += KaptSourceSetModelImpl(
+                        sourceSetName, isTest, kaptGeneratedSourcesDir, kaptGeneratedClassesDir, kaptGeneratedKotlinSourcesDir)
             }
         }
 
-        return KaptGradleModelImpl(kaptIsEnabled, sourceSets)
+        return KaptGradleModelImpl(kaptIsEnabled, project.buildDir, sourceSets)
     }
 
     private fun getKaptDirectory(funName: String, project: Project, sourceSetName: String): String {
         val kotlinKaptPlugin = project.plugins.findPlugin("kotlin-kapt") ?: return ""
 
-        val targetMethod = kotlinKaptPlugin::class.java.declaredMethods.firstOrNull {
+        val targetMethod = kotlinKaptPlugin::class.java.methods.firstOrNull {
             Modifier.isStatic(it.modifiers) && it.name == funName && it.parameterCount == 2
         } ?: return ""
 
@@ -126,8 +137,22 @@ class KaptModuleDataService : AbstractModuleDataService<ModuleData>() {
     ) {
         for (moduleData in toImport) {
             val module = modelsProvider.findIdeModule(moduleData.data) ?: continue
-            val modifiableModel = modelsProvider.getModifiableRootModel(module)
             val kaptModel = moduleData.kaptModel?.takeIf { it.isEnabled } ?: continue
+
+            val localFs = StandardFileSystems.local()
+            val contentEntryRoot = localFs.findFileByPath(kaptModel.buildDirectory.absolutePath) ?: continue
+            val contentEntry = modelsProvider.getModifiableRootModel(module).addContentEntry(contentEntryRoot)
+
+            val (productionSourceSets, testSourceSets) = kaptModel.sourceSets.partition { !it.isTest }
+
+            fun addSourceRoots(roots: List<KaptSourceSetModel>, isTest: Boolean) {
+                roots.flatMap { listOfNotNull(it.generatedSourcesDirFile, it.generatedKotlinSourcesDirFile) }
+                        .mapNotNull { localFs.findFileByPath(it.absolutePath) }
+                        .forEach { contentEntry.addSourceFolder(it, isTest) }
+            }
+
+            addSourceRoots(productionSourceSets, isTest = false)
+            addSourceRoots(testSourceSets, isTest = true)
         }
 
         super.importData(toImport, projectData, project, modelsProvider)
