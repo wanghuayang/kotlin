@@ -451,7 +451,7 @@ class LazyJavaClassMemberScope(
         }
 
         val propertyDescriptor = JavaPropertyDescriptor.create(
-                ownerDescriptor, Annotations.EMPTY, getterMethod.modality, getterMethod.visibility,
+                ownerDescriptor, getterMethod.annotations, getterMethod.modality, getterMethod.visibility,
                 /* isVar = */ setterMethod != null, overriddenProperty.name, getterMethod.source,
                 /* isStaticFinal = */ false
         )
